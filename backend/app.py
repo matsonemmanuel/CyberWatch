@@ -163,6 +163,25 @@ def update_log(log_id):
         "message": "Log not found"
     }), 404
 
+@app.route('/api/v1/logs/<int:log_id>/archive', methods=['PATCH'])
+def archive_log(log_id):
+
+    for log in logs_storage:
+
+        if log['id'] == log_id:
+
+            log['archived'] = True
+
+            return jsonify({
+                "status": "success",
+                "message": "Log archived successfully",
+                "data": log
+            })
+
+    return jsonify({
+        "status": "error",
+        "message": "Log not found"
+    }), 404
 
 # Devices Endpoint
 @app.route('/api/v1/devices', methods=['GET'])
