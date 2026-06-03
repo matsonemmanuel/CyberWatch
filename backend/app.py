@@ -24,30 +24,26 @@ def logs():
     # GET METHOD
     if request.method == 'GET':
 
-        # Query Parameter
         severity = request.args.get('severity')
+        archived = request.args.get('archived')
 
-        # Filter By Severity
-        if severity:
+        filtered_logs = []
 
-            filtered_logs = []
+        for log in logs_storage:
 
-            for log in logs_storage:
+            # Hide archived logs by default
+            if archived != 'true' and log['archived']:
+                continue
 
-                if log['severity'] == severity:
-                    filtered_logs.append(log)
+            if severity and log['severity'] != severity:
+                continue
 
-            return jsonify({
-                "status": "success",
-                "total_logs": len(filtered_logs),
-                "logs": filtered_logs
-            })
+            filtered_logs.append(log)
 
-        # Return All Logs
         return jsonify({
             "status": "success",
-            "total_logs": len(logs_storage),
-            "logs": logs_storage
+            "total_logs": len(filtered_logs),
+            "logs": filtered_logs
         })
 
     # POST METHOD
@@ -92,9 +88,10 @@ def logs():
             "timestamp": timestamp,
             "device": device,
             "event": event,
-            "severity": severity
-        }
-
+            "severity": severity,
+            "status": "open",
+            "archived": False
+     }
         # Store Log In Memory
         logs_storage.append(new_log)
 
@@ -163,12 +160,58 @@ def update_log(log_id):
         "message": "Log not found"
     }), 404
 
+@app.route('/api/v1/logs/<int:log_id>/status', methods=['PATCH'])
+def update_status(log_id):
+
+    data = request.get_json()
+
+    status = data.get('status')
+
+    allowed_statuses = [
+        'open',
+        'investigating',
+        'resolved'
+    ]
+
+    if status not in allowed_statuses:
+
+        return jsonify({
+            "status": "error",
+            "message": "Invalid status"
+        }), 400
+
+    for log in logs_storage:
+
+        if log['id'] == log_id:
+
+            log['status'] = status
+
+            return jsonify({
+                "status": "success",
+                "message": "Status updated successfully",
+                "data": log
+            })
+
+    return jsonify({
+        "status": "error",
+        "message": "Log not found"
+    }), 404
+
+
 @app.route('/api/v1/logs/<int:log_id>/archive', methods=['PATCH'])
 def archive_log(log_id):
 
     for log in logs_storage:
 
         if log['id'] == log_id:
+
+            # Only resolved incidents can be archived
+            if log['status'] != 'resolved':
+
+                return jsonify({
+                    "status": "error",
+                    "message": "Only resolved incidents can be archived"
+                }), 400
 
             log['archived'] = True
 
