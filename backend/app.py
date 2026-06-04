@@ -1,7 +1,29 @@
 from flask import Flask, jsonify, request
 from datetime import datetime, timezone
+import sqlite3
+import os
 
 app = Flask(__name__)
+
+# Database Configuration
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+DATABASE_PATH = os.path.join(
+    BASE_DIR,
+    '..',
+    'database',
+    'cyberwatch.db'
+)
+
+print("Database Path:", DATABASE_PATH)
+
+def get_db_connection():
+
+    connection = sqlite3.connect(DATABASE_PATH)
+
+    connection.row_factory = sqlite3.Row
+
+    return connection
 
 # Temporary In-Memory Storage
 logs_storage = []
@@ -77,22 +99,49 @@ def logs():
             }), 400
 
         # Generate Unique Log ID
-        log_id = len(logs_storage) + 1
+    
 
         # Generate UTC Timestamp
         timestamp = datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')
 
         # Create Log Object
         new_log = {
-            "id": log_id,
             "timestamp": timestamp,
             "device": device,
             "event": event,
             "severity": severity,
             "status": "open",
             "archived": False
-     }
-        # Store Log In Memory
+        }
+
+        # Save Log To Database
+        connection = get_db_connection()
+        cursor = connection.cursor()
+
+        cursor.execute(
+            '''
+            INSERT INTO logs
+            (timestamp, device, event, severity, status, archived)
+            VALUES (?, ?, ?, ?, ?, ?)
+            ''',
+            (
+                timestamp,
+                device,
+                event,
+                severity,
+                'open',
+                0
+            )
+        )
+
+        connection.commit()
+        new_log_id = cursor.lastrowid
+        connection.close()
+
+        # Add Database Generated ID
+        new_log['id'] = new_log_id
+
+        # Keep Temporary Memory Storage
         logs_storage.append(new_log)
 
         # Success Response
@@ -101,8 +150,6 @@ def logs():
             "message": "Log received successfully",
             "data": new_log
         }), 201
-
-
 # Retrieve Single Log By ID
 @app.route('/api/v1/logs/<int:log_id>', methods=['GET'])
 def get_single_log(log_id):
