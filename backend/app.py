@@ -25,8 +25,6 @@ def get_db_connection():
 
     return connection
 
-# Temporary In-Memory Storage
-logs_storage = []
 
 
 # Home Endpoint
@@ -46,28 +44,35 @@ def logs():
     # GET METHOD
     if request.method == 'GET':
 
-        severity = request.args.get('severity')
-        archived = request.args.get('archived')
+        connection = get_db_connection()
 
-        filtered_logs = []
+        cursor = connection.cursor()
 
-        for log in logs_storage:
+        cursor.execute("SELECT * FROM logs")
 
-            # Hide archived logs by default
-            if archived != 'true' and log['archived']:
-                continue
+        rows = cursor.fetchall()
 
-            if severity and log['severity'] != severity:
-                continue
+        connection.close()
 
-            filtered_logs.append(log)
+        logs = []
+
+        for row in rows:
+
+            logs.append({
+                "id": row["id"],
+                "timestamp": row["timestamp"],
+                "device": row["device"],
+                "event": row["event"],
+                "severity": row["severity"],
+                "status": row["status"],
+                "archived": bool(row["archived"])
+            })
 
         return jsonify({
             "status": "success",
-            "total_logs": len(filtered_logs),
-            "logs": filtered_logs
+            "total_logs": len(logs),
+            "logs": logs
         })
-
     # POST METHOD
     elif request.method == 'POST':
 
@@ -154,14 +159,35 @@ def logs():
 @app.route('/api/v1/logs/<int:log_id>', methods=['GET'])
 def get_single_log(log_id):
 
-    for log in logs_storage:
+    connection = get_db_connection()
 
-        if log['id'] == log_id:
+    cursor = connection.cursor()
 
-            return jsonify({
-                "status": "success",
-                "log": log
-            })
+    cursor.execute(
+        "SELECT * FROM logs WHERE id = ?",
+        (log_id,)
+    )
+
+    row = cursor.fetchone()
+
+    connection.close()
+
+    if row:
+
+        log = {
+            "id": row["id"],
+            "timestamp": row["timestamp"],
+            "device": row["device"],
+            "event": row["event"],
+            "severity": row["severity"],
+            "status": row["status"],
+            "archived": bool(row["archived"])
+        }
+
+        return jsonify({
+            "status": "success",
+            "log": log
+        })
 
     return jsonify({
         "status": "error",
@@ -175,37 +201,72 @@ def update_log(log_id):
 
     data = request.get_json()
 
+    device = data.get('device')
+    event = data.get('event')
+    severity = data.get('severity')
+
     allowed_severity = ['low', 'medium', 'high']
 
-    for log in logs_storage:
+    if severity not in allowed_severity:
 
-        if log['id'] == log_id:
+        return jsonify({
+            "status": "error",
+            "message": "Invalid severity level"
+        }), 400
 
-            # Validate Severity If Provided
-            if 'severity' in data:
+    connection = get_db_connection()
 
-                if data['severity'] not in allowed_severity:
+    cursor = connection.cursor()
 
-                    return jsonify({
-                        "status": "error",
-                        "message": "Invalid severity level"
-                    }), 400
+    cursor.execute(
+        '''
+        UPDATE logs
+        SET device = ?, event = ?, severity = ?
+        WHERE id = ?
+        ''',
+        (
+            device,
+            event,
+            severity,
+            log_id
+        )
+    )
 
-            # Update Fields
-            log['device'] = data.get('device', log['device'])
-            log['event'] = data.get('event', log['event'])
-            log['severity'] = data.get('severity', log['severity'])
+    connection.commit()
 
-            return jsonify({
-                "status": "success",
-                "message": "Log updated successfully",
-                "data": log
-            })
+    if cursor.rowcount == 0:
+
+        connection.close()
+
+        return jsonify({
+            "status": "error",
+            "message": "Log not found"
+        }), 404
+
+    cursor.execute(
+        "SELECT * FROM logs WHERE id = ?",
+        (log_id,)
+    )
+
+    row = cursor.fetchone()
+
+    connection.close()
+
+    updated_log = {
+        "id": row["id"],
+        "timestamp": row["timestamp"],
+        "device": row["device"],
+        "event": row["event"],
+        "severity": row["severity"],
+        "status": row["status"],
+        "archived": bool(row["archived"])
+    }
 
     return jsonify({
-        "status": "error",
-        "message": "Log not found"
-    }), 404
+        "status": "success",
+        "message": "Log updated successfully",
+        "data": updated_log
+    })
 
 @app.route('/api/v1/logs/<int:log_id>/status', methods=['PATCH'])
 def update_status(log_id):
@@ -227,51 +288,126 @@ def update_status(log_id):
             "message": "Invalid status"
         }), 400
 
-    for log in logs_storage:
+    connection = get_db_connection()
 
-        if log['id'] == log_id:
+    cursor = connection.cursor()
 
-            log['status'] = status
+    cursor.execute(
+        '''
+        UPDATE logs
+        SET status = ?
+        WHERE id = ?
+        ''',
+        (
+            status,
+            log_id
+        )
+    )
 
-            return jsonify({
-                "status": "success",
-                "message": "Status updated successfully",
-                "data": log
-            })
+    connection.commit()
+
+    if cursor.rowcount == 0:
+
+        connection.close()
+
+        return jsonify({
+            "status": "error",
+            "message": "Log not found"
+        }), 404
+
+    cursor.execute(
+        "SELECT * FROM logs WHERE id = ?",
+        (log_id,)
+    )
+
+    row = cursor.fetchone()
+
+    connection.close()
+
+    updated_log = {
+        "id": row["id"],
+        "timestamp": row["timestamp"],
+        "device": row["device"],
+        "event": row["event"],
+        "severity": row["severity"],
+        "status": row["status"],
+        "archived": bool(row["archived"])
+    }
 
     return jsonify({
-        "status": "error",
-        "message": "Log not found"
-    }), 404
+        "status": "success",
+        "message": "Status updated successfully",
+        "data": updated_log
+    })
 
 
 @app.route('/api/v1/logs/<int:log_id>/archive', methods=['PATCH'])
 def archive_log(log_id):
 
-    for log in logs_storage:
+    connection = get_db_connection()
 
-        if log['id'] == log_id:
+    cursor = connection.cursor()
 
-            # Only resolved incidents can be archived
-            if log['status'] != 'resolved':
+    cursor.execute(
+        "SELECT * FROM logs WHERE id = ?",
+        (log_id,)
+    )
 
-                return jsonify({
-                    "status": "error",
-                    "message": "Only resolved incidents can be archived"
-                }), 400
+    row = cursor.fetchone()
 
-            log['archived'] = True
+    if not row:
 
-            return jsonify({
-                "status": "success",
-                "message": "Log archived successfully",
-                "data": log
-            })
+        connection.close()
+
+        return jsonify({
+            "status": "error",
+            "message": "Log not found"
+        }), 404
+
+    if row["status"] != "resolved":
+
+        connection.close()
+
+        return jsonify({
+            "status": "error",
+            "message": "Only resolved incidents can be archived"
+        }), 400
+
+    cursor.execute(
+        '''
+        UPDATE logs
+        SET archived = 1
+        WHERE id = ?
+        ''',
+        (log_id,)
+    )
+
+    connection.commit()
+
+    cursor.execute(
+        "SELECT * FROM logs WHERE id = ?",
+        (log_id,)
+    )
+
+    updated_row = cursor.fetchone()
+
+    connection.close()
+
+    updated_log = {
+        "id": updated_row["id"],
+        "timestamp": updated_row["timestamp"],
+        "device": updated_row["device"],
+        "event": updated_row["event"],
+        "severity": updated_row["severity"],
+        "status": updated_row["status"],
+        "archived": bool(updated_row["archived"])
+    }
 
     return jsonify({
-        "status": "error",
-        "message": "Log not found"
-    }), 404
+        "status": "success",
+        "message": "Log archived successfully",
+        "data": updated_log
+    })
 
 # Devices Endpoint
 @app.route('/api/v1/devices', methods=['GET'])
