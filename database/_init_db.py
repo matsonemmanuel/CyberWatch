@@ -19,6 +19,18 @@ CREATE TABLE IF NOT EXISTS logs (
 )
 ''')
 
+# Devices Table
+cursor.execute('''
+CREATE TABLE IF NOT EXISTS devices (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    hostname TEXT NOT NULL,
+    ip_address TEXT NOT NULL,
+    operating_system TEXT NOT NULL,
+    status TEXT DEFAULT 'active',
+    registered_at TEXT NOT NULL
+)
+''')
+
 # Save Changes
 connection.commit()
 

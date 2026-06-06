@@ -147,7 +147,7 @@ def logs():
         new_log['id'] = new_log_id
 
         # Keep Temporary Memory Storage
-        logs_storage.append(new_log)
+        
 
         # Success Response
         return jsonify({
@@ -410,14 +410,136 @@ def archive_log(log_id):
     })
 
 # Devices Endpoint
-@app.route('/api/v1/devices', methods=['GET'])
-def devices():
+@app.route('/api/v1/devices', methods=(["GET", "POST"]))
+def register_device():
+
+    if request.method == 'GET':
+        connection = get_db_connection()
+
+        cursor = connection.cursor()
+
+        cursor.execute(
+            "SELECT * FROM devices"
+        )
+
+        rows = cursor.fetchall()
+
+        connection.close()
+
+        devices = []
+
+        for row in rows:
+
+            devices.append({
+                "id": row["id"],
+                "hostname": row["hostname"],
+                "ip_address": row["ip_address"],
+                "operating_system": row["operating_system"],
+                "status": row["status"],
+                "registered_at": row["registered_at"]
+            })
+
+        return jsonify({
+        "status": "success",
+        "total_devices": len(devices),
+        "devices": devices
+    })
+
+    data = request.get_json()
+
+    hostname = data.get('hostname')
+    ip_address = data.get('ip_address')
+    operating_system = data.get('operating_system')
+
+    if not hostname or not ip_address or not operating_system:
+
+        return jsonify({
+            "status": "error",
+            "message": "All fields are required"
+        }), 400
+
+    timestamp = datetime.now(
+        timezone.utc
+    ).isoformat().replace('+00:00', 'Z')
+
+    connection = get_db_connection()
+
+    cursor = connection.cursor()
+
+    cursor.execute(
+        '''
+        INSERT INTO devices
+        (
+            hostname,
+            ip_address,
+            operating_system,
+            registered_at
+        )
+        VALUES (?, ?, ?, ?)
+        ''',
+        (
+            hostname,
+            ip_address,
+            operating_system,
+            timestamp
+        )
+    )
+
+    connection.commit()
+
+    device_id = cursor.lastrowid
+
+    connection.close()
 
     return jsonify({
         "status": "success",
-        "message": "Devices retrieved successfully"
-    })
+        "message": "Device registered successfully",
+        "data": {
+            "id": device_id,
+            "hostname": hostname,
+            "ip_address": ip_address,
+            "operating_system": operating_system,
+            "status": "active",
+            "registered_at": timestamp
+        }
+    }), 201
 
+@app.route('/api/v1/devices/<int:device_id>', methods=['GET'])
+def get_single_device(device_id):
+
+    connection = get_db_connection()
+
+    cursor = connection.cursor()
+
+    cursor.execute(
+        "SELECT * FROM devices WHERE id = ?",
+        (device_id,)
+    )
+
+    row = cursor.fetchone()
+
+    connection.close()
+
+    if not row:
+
+        return jsonify({
+            "status": "error",
+            "message": "Device not found"
+        }), 404
+
+    device = {
+        "id": row["id"],
+        "hostname": row["hostname"],
+        "ip_address": row["ip_address"],
+        "operating_system": row["operating_system"],
+        "status": row["status"],
+        "registered_at": row["registered_at"]
+    }
+
+    return jsonify({
+        "status": "success",
+        "device": device
+    })
 
 if __name__ == '__main__':
     app.run(debug=True)
