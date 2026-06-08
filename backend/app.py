@@ -541,5 +541,79 @@ def get_single_device(device_id):
         "device": device
     })
 
+@app.route('/api/v1/devices/<int:device_id>/status', methods=['PATCH'])
+def update_device_status(device_id):
+
+    data = request.get_json()
+
+    status = data.get('status')
+
+    allowed_statuses = [
+        'active',
+        'offline',
+        'maintenance',
+        'disabled'
+    ]
+
+    if status not in allowed_statuses:
+
+        return jsonify({
+            "status": "error",
+            "message": "Invalid device status"
+        }), 400
+
+    connection = get_db_connection()
+
+    cursor = connection.cursor()
+
+    # Check if device exists
+    cursor.execute(
+        "SELECT * FROM devices WHERE id = ?",
+        (device_id,)
+    )
+
+    device = cursor.fetchone()
+
+    if not device:
+
+        connection.close()
+
+        return jsonify({
+            "status": "error",
+            "message": "Device not found"
+        }), 404
+
+    # Update status
+    cursor.execute(
+        """
+        UPDATE devices
+        SET status = ?
+        WHERE id = ?
+        """,
+        (status, device_id)
+    )
+
+    connection.commit()
+
+    # Retrieve updated device
+    cursor.execute(
+        "SELECT * FROM devices WHERE id = ?",
+        (device_id,)
+    )
+
+    updated_device = cursor.fetchone()
+
+    connection.close()
+
+    return jsonify({
+        "status": "success",
+        "message": "Device status updated successfully",
+        "data": {
+            "id": updated_device["id"],
+            "hostname": updated_device["hostname"],
+            "status": updated_device["status"]
+        }
+    })
+
 if __name__ == '__main__':
     app.run(debug=True)
