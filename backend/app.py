@@ -59,14 +59,14 @@ def logs():
         for row in rows:
 
             logs.append({
-                "id": row["id"],
-                "timestamp": row["timestamp"],
-                "device": row["device"],
-                "event": row["event"],
-                "severity": row["severity"],
-                "status": row["status"],
-                "archived": bool(row["archived"])
-            })
+                        "id": row["id"],
+                        "timestamp": row["timestamp"],
+                        "device_id": row["device_id"],
+                        "event": row["event"],
+                        "severity": row["severity"],
+                        "status": row["status"],
+                        "archived": bool(row["archived"])
+                    })
 
         return jsonify({
             "status": "success",
@@ -80,17 +80,39 @@ def logs():
         data = request.get_json()
 
         # Extract Values
-        device = data.get('device')
+        device_id = data.get('device_id')
         event = data.get('event')
         severity = data.get('severity')
 
+
         # Validate Missing Fields
-        if not device or not event or not severity:
+        if not device_id or not event or not severity:
 
             return jsonify({
                 "status": "error",
                 "message": "All fields are required"
             }), 400
+
+        # Check Whether Device Exists
+        connection = get_db_connection()
+
+        cursor = connection.cursor()
+
+        cursor.execute(
+            "SELECT * FROM devices WHERE id = ?",
+            (device_id,)
+        )
+
+        device = cursor.fetchone()
+
+        if not device:
+
+            connection.close()
+
+            return jsonify({
+                "status": "error",
+                "message": "Device not found"
+            }), 404
 
         # Allowed Severity Levels
         allowed_severity = ['low', 'medium', 'high']
@@ -103,41 +125,45 @@ def logs():
                 "message": "Invalid severity level"
             }), 400
 
-        # Generate Unique Log ID
-    
-
         # Generate UTC Timestamp
         timestamp = datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')
 
         # Create Log Object
         new_log = {
-            "timestamp": timestamp,
-            "device": device,
-            "event": event,
-            "severity": severity,
-            "status": "open",
-            "archived": False
-        }
+                "timestamp": timestamp,
+                "device_id": device_id,
+                "event": event,
+                "severity": severity,
+                "status": "open",
+                "archived": False
+            }
 
         # Save Log To Database
         connection = get_db_connection()
         cursor = connection.cursor()
 
         cursor.execute(
-            '''
-            INSERT INTO logs
-            (timestamp, device, event, severity, status, archived)
-            VALUES (?, ?, ?, ?, ?, ?)
-            ''',
-            (
-                timestamp,
-                device,
-                event,
-                severity,
-                'open',
-                0
+                '''
+                INSERT INTO logs
+                (
+                    timestamp,
+                    device_id,
+                    event,
+                    severity,
+                    status,
+                    archived
+                )
+                VALUES (?, ?, ?, ?, ?, ?)
+                ''',
+                (
+                    timestamp,
+                    device_id,
+                    event,
+                    severity,
+                    'open',
+                    0
+                )
             )
-        )
 
         connection.commit()
         new_log_id = cursor.lastrowid
@@ -145,9 +171,6 @@ def logs():
 
         # Add Database Generated ID
         new_log['id'] = new_log_id
-
-        # Keep Temporary Memory Storage
-        
 
         # Success Response
         return jsonify({
@@ -177,7 +200,7 @@ def get_single_log(log_id):
         log = {
             "id": row["id"],
             "timestamp": row["timestamp"],
-            "device": row["device"],
+            "device_id": row["device_id"],
             "event": row["event"],
             "severity": row["severity"],
             "status": row["status"],
@@ -201,7 +224,7 @@ def update_log(log_id):
 
     data = request.get_json()
 
-    device = data.get('device')
+    device_id = data.get('device_id')
     event = data.get('event')
     severity = data.get('severity')
 
@@ -221,14 +244,16 @@ def update_log(log_id):
     cursor.execute(
         '''
         UPDATE logs
-        SET device = ?, event = ?, severity = ?
+        SET device_id = ?, event = ?, severity = ?
         WHERE id = ?
         ''',
         (
-            device,
-            event,
-            severity,
-            log_id
+            (
+                device_id,
+                event,
+                severity,
+                log_id
+            )
         )
     )
 
@@ -255,7 +280,7 @@ def update_log(log_id):
     updated_log = {
         "id": row["id"],
         "timestamp": row["timestamp"],
-        "device": row["device"],
+        "device_id": row["device_id"],
         "event": row["event"],
         "severity": row["severity"],
         "status": row["status"],
@@ -327,7 +352,7 @@ def update_status(log_id):
     updated_log = {
         "id": row["id"],
         "timestamp": row["timestamp"],
-        "device": row["device"],
+        "device_id": row["device_id"],
         "event": row["event"],
         "severity": row["severity"],
         "status": row["status"],
@@ -396,7 +421,7 @@ def archive_log(log_id):
     updated_log = {
         "id": updated_row["id"],
         "timestamp": updated_row["timestamp"],
-        "device": updated_row["device"],
+        "device_id": updated_row["device_id"],
         "event": updated_row["event"],
         "severity": updated_row["severity"],
         "status": updated_row["status"],
@@ -613,6 +638,63 @@ def update_device_status(device_id):
             "hostname": updated_device["hostname"],
             "status": updated_device["status"]
         }
+    })
+
+@app.route('/api/v1/devices/<int:device_id>/logs', methods=['GET'])
+def get_device_logs(device_id):
+
+    connection = get_db_connection()
+
+    cursor = connection.cursor()
+
+    # Verify device exists
+    cursor.execute(
+        "SELECT * FROM devices WHERE id = ?",
+        (device_id,)
+    )
+
+    device = cursor.fetchone()
+
+    if not device:
+
+        connection.close()
+
+        return jsonify({
+            "status": "error",
+            "message": "Device not found"
+        }), 404
+
+    # Retrieve device logs
+    cursor.execute(
+        """
+        SELECT * FROM logs
+        WHERE device_id = ?
+        """,
+        (device_id,)
+    )
+
+    rows = cursor.fetchall()
+
+    connection.close()
+
+    logs = []
+
+    for row in rows:
+
+        logs.append({
+            "id": row["id"],
+            "timestamp": row["timestamp"],
+            "event": row["event"],
+            "severity": row["severity"],
+            "status": row["status"],
+            "archived": bool(row["archived"])
+        })
+
+    return jsonify({
+        "status": "success",
+        "device_id": device_id,
+        "total_logs": len(logs),
+        "logs": logs
     })
 
 if __name__ == '__main__':
