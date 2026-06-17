@@ -1,4 +1,5 @@
-from flask import Flask, jsonify, request
+
+from flask import Flask, jsonify, request 
 from datetime import datetime, timezone
 import sqlite3
 import os
@@ -48,7 +49,22 @@ def logs():
 
         cursor = connection.cursor()
 
-        cursor.execute("SELECT * FROM logs")
+        cursor.execute("""
+        SELECT
+            logs.id,
+            logs.timestamp,
+            logs.event,
+            logs.severity,
+            logs.status,
+            logs.archived,
+            devices.id AS device_id,
+            devices.hostname,
+            devices.ip_address,
+            devices.operating_system
+        FROM logs
+        INNER JOIN devices
+        ON logs.device_id = devices.id
+        """)
 
         rows = cursor.fetchall()
 
@@ -59,14 +75,20 @@ def logs():
         for row in rows:
 
             logs.append({
-                        "id": row["id"],
-                        "timestamp": row["timestamp"],
-                        "device_id": row["device_id"],
-                        "event": row["event"],
-                        "severity": row["severity"],
-                        "status": row["status"],
-                        "archived": bool(row["archived"])
-                    })
+                    "id": row["id"],
+                    "timestamp": row["timestamp"],
+                    "event": row["event"],
+                    "severity": row["severity"],
+                    "status": row["status"],
+                    "archived": bool(row["archived"]),
+
+                    "device": {
+                        "id": row["device_id"],
+                        "hostname": row["hostname"],
+                        "ip_address": row["ip_address"],
+                        "operating_system": row["operating_system"]
+                    }
+                })
 
         return jsonify({
             "status": "success",
