@@ -48,6 +48,13 @@ def logs():
         severity = request.args.get('severity')
         status = request.args.get('status')
         archived = request.args.get('archived')
+        page = int(request.args.get('page', 1))
+        limit = int(request.args.get('limit', 10))
+        offset = (page - 1) * limit
+
+        print("Page:", page)
+        print("Limit:", limit)
+        print("Offset:", offset)
 
         print("Severity Filter:", severity)
         connection = get_db_connection()
@@ -83,6 +90,15 @@ def logs():
         if status:
             query += " AND logs.status = ?"
             params.append(status)
+
+
+        # Pagination   
+        query += " LIMIT ? OFFSET ?"
+        params.append(limit)
+        params.append(offset)
+
+        print("Final Query:", query)
+        print("Parameters:", params)
 
         cursor.execute(query, params)
 
@@ -456,6 +472,7 @@ def archive_log(log_id):
         "status": updated_row["status"],
         "archived": bool(updated_row["archived"])
     }
+
 
     return jsonify({
         "status": "success",
