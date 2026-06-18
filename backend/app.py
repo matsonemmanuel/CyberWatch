@@ -769,5 +769,98 @@ def get_device_logs(device_id):
         "logs": logs
     })
 
+# Dashboard Statistics Endpoint
+@app.route('/api/v1/dashboard/stats', methods=['GET'])
+def dashboard_stats():
+
+    connection = get_db_connection()
+
+    cursor = connection.cursor()
+
+    cursor.execute(
+        "SELECT COUNT(*) FROM devices"
+    )
+
+#Device metrics for dashboard
+    total_devices = cursor.fetchone()[0]
+
+    cursor.execute(
+    "SELECT COUNT(*) FROM logs"
+)
+
+#Logs metrics for pagination
+    total_logs = cursor.fetchone()[0]
+
+#Open incidents metrics for dashboard
+    cursor.execute(
+    """
+    SELECT COUNT(*)
+    FROM logs
+    WHERE status = 'open'
+    """
+)
+
+    open_incidents = cursor.fetchone()[0]
+
+    cursor.execute(
+    """
+    SELECT COUNT(*)
+    FROM logs
+    WHERE status = 'investigating'
+    """
+)
+
+#Incidents that are currently being investigated for dashboard
+    investigating_incidents = cursor.fetchone()[0]
+
+    cursor.execute(
+    """
+    SELECT COUNT(*)
+    FROM logs
+    WHERE status = 'resolved'
+    """
+)
+
+#Incidents that have been resolved for dashboard
+    resolved_incidents = cursor.fetchone()[0]
+
+    cursor.execute(
+    """
+    SELECT COUNT(*)
+    FROM logs
+    WHERE archived = 1
+    """
+)
+
+
+#Incidents that have been archived for dashboard
+    archived_incidents = cursor.fetchone()[0]
+
+    cursor.execute(
+    """
+    SELECT COUNT(*)
+    FROM logs
+    WHERE severity = 'high'
+    """
+)
+
+
+#Incidents that have a high severity for dashboard
+    high_severity_incidents = cursor.fetchone()[0]
+
+    connection.close()
+
+    return jsonify({
+    "status": "success",
+    "total_devices": total_devices,
+    "total_logs": total_logs,
+    "open_incidents": open_incidents,
+    "investigating_incidents": investigating_incidents,
+    "resolved_incidents": resolved_incidents,
+    "archived_incidents": archived_incidents,
+    "high_severity_incidents": high_severity_incidents
+})
+
+print(app.url_map)
 if __name__ == '__main__':
     app.run(debug=True)
