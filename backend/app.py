@@ -59,6 +59,26 @@ def logs():
         print("Severity Filter:", severity)
         connection = get_db_connection()
         cursor = connection.cursor()
+        # First, get the total count of logs for pagination
+
+        count_cursor = connection.cursor()
+
+        count_cursor.execute(
+                """
+                SELECT COUNT(*)
+                FROM logs
+                WHERE archived = 0
+                """
+            )
+
+        total_logs = count_cursor.fetchone()[0]
+
+        # Calculate total pages based on total logs and limit
+
+        total_pages = (total_logs + limit - 1) // limit
+
+        print("Total Logs:", total_logs)
+        print("Total Pages:", total_pages)
 
         query = """
             SELECT
@@ -125,10 +145,16 @@ def logs():
             })
 
         return jsonify({
-            "status": "success",
-            "total_logs": len(logs),
-            "logs": logs
-        })
+                "status": "success",
+
+                "page": page,
+                "limit": limit,
+
+                "total_logs": total_logs,
+                "total_pages": total_pages,
+
+                "logs": logs
+            })
 
     # POST METHOD
     elif request.method == 'POST':
