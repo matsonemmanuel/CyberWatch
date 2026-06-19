@@ -1,5 +1,8 @@
 
-from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.security import (
+    generate_password_hash,
+    check_password_hash
+)
 from flask import Flask, jsonify, request 
 from datetime import datetime, timezone
 import sqlite3
@@ -980,5 +983,57 @@ def register_user():
             "created_at": timestamp
         }
     }), 201
+
+# User Login Endpoint
+
+@app.route('/api/v1/auth/login', methods=['POST'])
+def login_user():
+
+    data = request.get_json()
+
+    username = data.get('username')
+    password = data.get('password')
+
+    if not username or not password:
+
+        return jsonify({
+            "status": "error",
+            "message": "Username and password are required"
+        }), 400
+    
+    # Connect to database
+    connection = get_db_connection()
+
+    cursor = connection.cursor()
+
+    # Find user by username in the database
+    cursor.execute(
+        """
+        SELECT * FROM users
+        WHERE username = ?
+        """,
+        (username,)
+    )
+
+    user = cursor.fetchone()
+
+    # Check if user exists
+    if not user:
+
+        connection.close()
+
+        return jsonify({
+            "status": "error",
+            "message": "Invalid username or password"
+        }), 401
+
+    # User found
+    connection.close()
+
+    return jsonify({
+        "status": "success",
+        "message": "User found",
+        "username": user["username"]
+    })
 if __name__ == '__main__':
     app.run(debug=True)
