@@ -249,6 +249,7 @@ def logs():
             "data": new_log
         }), 201
 
+
 # Retrieve Single Log By ID
 @app.route('/api/v1/logs/<int:log_id>', methods=['GET'])
 def get_single_log(log_id):
@@ -436,7 +437,7 @@ def update_status(log_id):
         "data": updated_log
     })
 
-
+# Archive Log By ID
 @app.route('/api/v1/logs/<int:log_id>/archive', methods=['PATCH'])
 def archive_log(log_id):
 
@@ -601,6 +602,7 @@ def register_device():
         }
     }), 201
 
+# Retrieve Single Device By ID
 @app.route('/api/v1/devices/<int:device_id>', methods=['GET'])
 def get_single_device(device_id):
 
@@ -638,6 +640,7 @@ def get_single_device(device_id):
         "device": device
     })
 
+# Update Device Status
 @app.route('/api/v1/devices/<int:device_id>/status', methods=['PATCH'])
 def update_device_status(device_id):
 
@@ -711,6 +714,8 @@ def update_device_status(device_id):
             "status": updated_device["status"]
         }
     })
+
+# Retrieve Logs for a Specific Device
 
 @app.route('/api/v1/devices/<int:device_id>/logs', methods=['GET'])
 def get_device_logs(device_id):
