@@ -867,5 +867,74 @@ def dashboard_stats():
 })
 
 print(app.url_map)
+
+# User Registration Endpoint
+
+@app.route('/api/v1/auth/register', methods=['POST'])
+def register_user():
+
+    data = request.get_json()
+
+    username = data.get('username')
+    email = data.get('email')
+    password = data.get('password')
+
+    if not username or not email or not password:
+
+        return jsonify({
+            "status": "error",
+            "message": "All fields are required"
+        }), 400
+
+    # Database connection
+    connection = get_db_connection()
+    cursor = connection.cursor()
+
+    # Check if username already exists
+    cursor.execute(
+        """
+        SELECT * FROM users
+        WHERE username = ?
+        """,
+        (username,)
+    )
+
+    existing_user = cursor.fetchone()
+
+    if existing_user:
+
+        connection.close()
+
+        return jsonify({
+            "status": "error",
+            "message": "Username already exists"
+        }), 409
+
+    # Check if email already exists
+    cursor.execute(
+        """
+        SELECT * FROM users
+        WHERE email = ?
+        """,
+        (email,)
+    )
+
+    existing_email = cursor.fetchone()
+
+    if existing_email:
+
+        connection.close()
+
+        return jsonify({
+            "status": "error",
+            "message": "Email already exists"
+        }), 409
+
+    connection.close()
+
+    return jsonify({
+        "status": "success",
+        "message": "Username and email available"
+    })
 if __name__ == '__main__':
     app.run(debug=True)
