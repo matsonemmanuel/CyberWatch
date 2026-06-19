@@ -1027,13 +1027,32 @@ def login_user():
             "message": "Invalid username or password"
         }), 401
 
+
+# Check if the provided password matches the hashed password in the database
+
+    if not check_password_hash(
+        user["password"],
+        password
+    ):
+
+        connection.close()
+
+        return jsonify({
+            "status": "error",
+            "message": "Invalid username or password"
+        }), 401
     # User found
     connection.close()
 
     return jsonify({
         "status": "success",
-        "message": "User found",
-        "username": user["username"]
-    })
+        "message": "Login successful",
+        "user": {
+            "id": user["id"],
+            "username": user["username"],
+            "email": user["email"],
+            "role": user["role"]
+        }
+})
 if __name__ == '__main__':
     app.run(debug=True)
