@@ -3,7 +3,11 @@ from werkzeug.security import (
     generate_password_hash,
     check_password_hash
 )
+import jwt
+from datetime import timedelta
+
 from flask import Flask, jsonify, request 
+
 from datetime import datetime, timezone
 import sqlite3
 import os
@@ -1052,12 +1056,36 @@ def login_user():
             "status": "error",
             "message": "Invalid username or password"
         }), 401
+    
+
+    # Generate JWT token for authenticated user
+
+    expiration_time = datetime.now(
+        timezone.utc
+    ) + timedelta(
+        minutes=ACCESS_TOKEN_EXPIRE_MINUTES
+    )
+
+    payload = {
+        "user_id": user["id"],
+        "username": user["username"],
+        "role": user["role"],
+        "exp": expiration_time
+    }
+
+    token = jwt.encode(
+    payload,
+    JWT_SECRET_KEY,
+    algorithm="HS256"
+    )
+
     # User found
     connection.close()
 
     return jsonify({
         "status": "success",
         "message": "Login successful",
+        "token": token,
         "user": {
             "id": user["id"],
             "username": user["username"],
