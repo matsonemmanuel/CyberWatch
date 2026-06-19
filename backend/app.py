@@ -930,11 +930,51 @@ def register_user():
             "message": "Email already exists"
         }), 409
 
+#Generate timestamp for user registration
+    timestamp = datetime.now(
+    timezone.utc
+    ).isoformat().replace('+00:00', 'Z')
+
+
+# Insert new user into the database
+    cursor.execute(
+        """
+        INSERT INTO users
+        (
+            username,
+            email,
+            password,
+            role,
+            created_at
+        )
+        VALUES (?, ?, ?, ?, ?)
+        """,
+        (
+            username,
+            email,
+            password,
+            'analyst',
+            timestamp
+        )
+    )
+
+# Commit the changes to the database
+    connection.commit()
+
+    user_id = cursor.lastrowid
+
     connection.close()
 
     return jsonify({
         "status": "success",
-        "message": "Username and email available"
-    })
+        "message": "User registered successfully",
+        "data": {
+            "id": user_id,
+            "username": username,
+            "email": email,
+            "role": "analyst",
+            "created_at": timestamp
+        }
+    }), 201
 if __name__ == '__main__':
     app.run(debug=True)
