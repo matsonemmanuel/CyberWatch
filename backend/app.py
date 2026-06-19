@@ -1,4 +1,5 @@
 
+from werkzeug.security import generate_password_hash, check_password_hash
 from flask import Flask, jsonify, request 
 from datetime import datetime, timezone
 import sqlite3
@@ -879,6 +880,9 @@ def register_user():
     email = data.get('email')
     password = data.get('password')
 
+#Password hashing for security
+    hashed_password = generate_password_hash(password)
+
     if not username or not email or not password:
 
         return jsonify({
@@ -952,7 +956,7 @@ def register_user():
         (
             username,
             email,
-            password,
+            hashed_password,
             'analyst',
             timestamp
         )
