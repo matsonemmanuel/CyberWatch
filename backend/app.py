@@ -7,8 +7,19 @@ from flask import Flask, jsonify, request
 from datetime import datetime, timezone
 import sqlite3
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
+
+# JWT Configuration
+
+JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
+ACCESS_TOKEN_EXPIRE_MINUTES = int(
+    os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 60)
+)
+
 
 # Database Configuration
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
