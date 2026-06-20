@@ -468,6 +468,23 @@ def update_status(log_id):
 @app.route('/api/v1/logs/<int:log_id>/archive', methods=['PATCH'])
 def archive_log(log_id):
 
+# Verify the JWT token for authentication
+
+    payload, error = verify_token()
+
+    if error:
+        return error
+    
+    if payload["role"] != "admin":
+
+        return jsonify({
+            "status": "error",
+            "message": "Access denied"
+        }), 403
+
+
+# Connect to the database and check if the log exists and is resolved before archiving
+
     connection = get_db_connection()
 
     cursor = connection.cursor()
