@@ -67,6 +67,14 @@ def home():
 @app.route('/api/v1/logs', methods=['GET', 'POST'])
 def logs():
 
+# Verify the JWT token for authentication
+
+    payload, error = verify_token()
+
+    if error:
+        return error
+
+
     # GET METHOD
     if request.method == 'GET':
 
@@ -281,6 +289,15 @@ def logs():
 @app.route('/api/v1/logs/<int:log_id>', methods=['GET'])
 def get_single_log(log_id):
 
+    # Verify the JWT token for authentication
+
+    payload, error = verify_token()
+
+    if error:
+        return error
+    
+# Connect to the database and check if the log exists before retrieving details
+
     connection = get_db_connection()
 
     cursor = connection.cursor()
@@ -320,6 +337,14 @@ def get_single_log(log_id):
 # Update Log By ID
 @app.route('/api/v1/logs/<int:log_id>', methods=['PUT'])
 def update_log(log_id):
+
+# Verify the JWT token for authentication
+
+    payload, error = verify_token()
+
+    if error:
+        return error
+    
 
     data = request.get_json()
 
@@ -391,9 +416,17 @@ def update_log(log_id):
         "message": "Log updated successfully",
         "data": updated_log
     })
-
+# Update Log Status By ID
 @app.route('/api/v1/logs/<int:log_id>/status', methods=['PATCH'])
 def update_status(log_id):
+
+    # Verify the JWT token for authentication
+
+    payload, error = verify_token()
+
+    if error:
+        return error
+    
 
     data = request.get_json()
 
@@ -555,6 +588,15 @@ def archive_log(log_id):
 @app.route('/api/v1/devices', methods=(["GET", "POST"]))
 def register_device():
 
+# Verify the JWT token for authentication
+
+    payload, error = verify_token()
+
+    if error:
+        return error
+
+# GET METHOD - Retrieve All Devices with Optional Pagination and Filtering
+
     if request.method == 'GET':
         connection = get_db_connection()
 
@@ -650,6 +692,16 @@ def register_device():
 @app.route('/api/v1/devices/<int:device_id>', methods=['GET'])
 def get_single_device(device_id):
 
+
+# Verify the JWT token for authentication
+
+    payload, error = verify_token()
+
+    if error:
+        return error
+
+# Connect to the database and check if the device exists before retrieving details
+
     connection = get_db_connection()
 
     cursor = connection.cursor()
@@ -687,6 +739,14 @@ def get_single_device(device_id):
 # Update Device Status
 @app.route('/api/v1/devices/<int:device_id>/status', methods=['PATCH'])
 def update_device_status(device_id):
+
+
+# Verify the JWT token for authentication
+
+    payload, error = verify_token()
+
+    if error:
+        return error
 
     data = request.get_json()
 
@@ -763,6 +823,17 @@ def update_device_status(device_id):
 
 @app.route('/api/v1/devices/<int:device_id>/logs', methods=['GET'])
 def get_device_logs(device_id):
+
+
+# Verify the JWT token for authentication
+
+    payload, error = verify_token()
+
+    if error:
+        return error
+
+# Connect to the database and check if the device exists before retrieving logs
+
 
     connection = get_db_connection()
 
@@ -880,18 +951,18 @@ def verify_token():
 
 
 
-# Dashboard Statistics Endpoint
+    # Dashboard Statistics Endpoint
 @app.route('/api/v1/dashboard/stats', methods=['GET'])
 def dashboard_stats():
 
-# Verify the JWT token for authentication
+    # Verify the JWT token for authentication
     payload, error = verify_token()
 
 
     if error:
         return error
     
-# Connect to the database and retrieve metrics for the dashboard
+    # Connect to the database and retrieve metrics for the dashboard
 
     connection = get_db_connection()
 
@@ -901,17 +972,17 @@ def dashboard_stats():
         "SELECT COUNT(*) FROM devices"
     )
 
-#Device metrics for dashboard
+    #Device metrics for dashboard
     total_devices = cursor.fetchone()[0]
 
     cursor.execute(
     "SELECT COUNT(*) FROM logs"
 )
 
-#Logs metrics for pagination
+    #Logs metrics for pagination
     total_logs = cursor.fetchone()[0]
 
-#Open incidents metrics for dashboard
+    #Open incidents metrics for dashboard
     cursor.execute(
     """
     SELECT COUNT(*)
@@ -930,7 +1001,7 @@ def dashboard_stats():
     """
 )
 
-#Incidents that are currently being investigated for dashboard
+    #Incidents that are currently being investigated for dashboard
     investigating_incidents = cursor.fetchone()[0]
 
     cursor.execute(
@@ -941,7 +1012,7 @@ def dashboard_stats():
     """
 )
 
-#Incidents that have been resolved for dashboard
+    #Incidents that have been resolved for dashboard
     resolved_incidents = cursor.fetchone()[0]
 
     cursor.execute(
@@ -953,7 +1024,7 @@ def dashboard_stats():
 )
 
 
-#Incidents that have been archived for dashboard
+    #Incidents that have been archived for dashboard
     archived_incidents = cursor.fetchone()[0]
 
     cursor.execute(
@@ -965,7 +1036,7 @@ def dashboard_stats():
 )
 
 
-#Incidents that have a high severity for dashboard
+    #Incidents that have a high severity for dashboard
     high_severity_incidents = cursor.fetchone()[0]
 
     connection.close()
@@ -983,7 +1054,7 @@ def dashboard_stats():
 
 print(app.url_map)
 
-# User Registration Endpoint
+    # User Registration Endpoint
 
 @app.route('/api/v1/auth/register', methods=['POST'])
 def register_user():
@@ -994,7 +1065,7 @@ def register_user():
     email = data.get('email')
     password = data.get('password')
 
-#Password hashing for security
+    #Password hashing for security
     hashed_password = generate_password_hash(password)
 
     if not username or not email or not password:
@@ -1049,13 +1120,13 @@ def register_user():
             "message": "Email already exists"
         }), 409
 
-#Generate timestamp for user registration
+    #Generate timestamp for user registration
     timestamp = datetime.now(
     timezone.utc
     ).isoformat().replace('+00:00', 'Z')
 
 
-# Insert new user into the database
+    # Insert new user into the database
     cursor.execute(
         """
         INSERT INTO users
@@ -1077,7 +1148,7 @@ def register_user():
         )
     )
 
-# Commit the changes to the database
+    # Commit the changes to the database
     connection.commit()
 
     user_id = cursor.lastrowid
@@ -1096,7 +1167,7 @@ def register_user():
         }
     }), 201
 
-# User Login Endpoint
+    # User Login Endpoint
 
 @app.route('/api/v1/auth/login', methods=['POST'])
 def login_user():
@@ -1140,7 +1211,7 @@ def login_user():
         }), 401
 
 
-# Check if the provided password matches the hashed password in the database
+    # Check if the provided password matches the hashed password in the database
 
     if not check_password_hash(
         user["password"],
@@ -1155,7 +1226,7 @@ def login_user():
         }), 401
     
 
-    # Generate JWT token for authenticated user
+     # Generate JWT token for authenticated user
 
     expiration_time = datetime.now(
         timezone.utc
