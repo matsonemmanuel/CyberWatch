@@ -4,6 +4,12 @@ from werkzeug.security import (
     check_password_hash
 )
 import jwt
+
+from jwt.exceptions import (
+    ExpiredSignatureError,
+    InvalidTokenError
+)
+
 from datetime import timedelta
 
 from flask import Flask, jsonify, request 
@@ -256,6 +262,7 @@ def logs():
             )
         )
 
+
         connection.commit()
         new_log_id = cursor.lastrowid
         connection.close()
@@ -267,6 +274,7 @@ def logs():
             "message": "Log received successfully",
             "data": new_log
         }), 201
+
 
 
 # Retrieve Single Log By ID
@@ -793,9 +801,80 @@ def get_device_logs(device_id):
         "logs": logs
     })
 
+# Token Verification Function
+def verify_token():
+
+    auth_header = request.headers.get("Authorization")
+
+    if not auth_header:
+
+        return None, (
+            jsonify({
+                "status": "error",
+                "message": "Authorization token is missing"
+            }),
+            401
+        )
+
+    if not auth_header.startswith("Bearer "):
+
+        return None, (
+            jsonify({
+                "status": "error",
+                "message": "Invalid authorization format"
+            }),
+            401
+        )
+
+    token = auth_header.split(" ")[1]
+
+# Verify the JWT token
+
+    try:
+
+        payload = jwt.decode(
+            token,
+            JWT_SECRET_KEY,
+            algorithms=["HS256"]
+        )
+
+        return payload, None
+
+    except ExpiredSignatureError:
+
+        return None, (
+            jsonify({
+                "status": "error",
+                "message": "Token has expired"
+            }),
+            401
+        )
+
+    except InvalidTokenError:
+
+        return None, (
+            jsonify({
+                "status": "error",
+                "message": "Invalid token"
+            }),
+            401
+        )
+
+
+
+
 # Dashboard Statistics Endpoint
 @app.route('/api/v1/dashboard/stats', methods=['GET'])
 def dashboard_stats():
+
+# Verify the JWT token for authentication
+    payload, error = verify_token()
+
+
+    if error:
+        return error
+    
+# Connect to the database and retrieve metrics for the dashboard
 
     connection = get_db_connection()
 
@@ -940,6 +1019,7 @@ def register_user():
         """,
         (email,)
     )
+
 
     existing_email = cursor.fetchone()
 
