@@ -5,6 +5,8 @@ from werkzeug.security import (
 )
 import jwt
 
+from functools import wraps
+
 from jwt.exceptions import (
     ExpiredSignatureError,
     InvalidTokenError
@@ -62,18 +64,24 @@ def home():
         "message": "CyberWatch API Version 1 Running Successfully"
     })
 
+# Decorator to Require Login for Certain Endpoints
 
-# Logs Endpoint
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        payload, error = verify_token()
+
+        if error:
+            return error
+
+        return f(*args, **kwargs)
+
+    return decorated_function
+
+    # Logs Endpoint
 @app.route('/api/v1/logs', methods=['GET', 'POST'])
+@login_required
 def logs():
-
-# Verify the JWT token for authentication
-
-    payload, error = verify_token()
-
-    if error:
-        return error
-
 
     # GET METHOD
     if request.method == 'GET':
@@ -285,18 +293,12 @@ def logs():
 
 
 
-# Retrieve Single Log By ID
+    # Retrieve Single Log By ID
 @app.route('/api/v1/logs/<int:log_id>', methods=['GET'])
+@login_required
 def get_single_log(log_id):
 
-    # Verify the JWT token for authentication
-
-    payload, error = verify_token()
-
-    if error:
-        return error
-    
-# Connect to the database and check if the log exists before retrieving details
+    # Connect to the database and check if the log exists before retrieving details
 
     connection = get_db_connection()
 
@@ -334,17 +336,10 @@ def get_single_log(log_id):
     }), 404
 
 
-# Update Log By ID
+    # Update Log By ID
 @app.route('/api/v1/logs/<int:log_id>', methods=['PUT'])
+@login_required
 def update_log(log_id):
-
-# Verify the JWT token for authentication
-
-    payload, error = verify_token()
-
-    if error:
-        return error
-    
 
     data = request.get_json()
 
@@ -416,17 +411,11 @@ def update_log(log_id):
         "message": "Log updated successfully",
         "data": updated_log
     })
-# Update Log Status By ID
+    # Update Log Status By ID
 @app.route('/api/v1/logs/<int:log_id>/status', methods=['PATCH'])
+@login_required
 def update_status(log_id):
 
-    # Verify the JWT token for authentication
-
-    payload, error = verify_token()
-
-    if error:
-        return error
-    
 
     data = request.get_json()
 
@@ -497,17 +486,14 @@ def update_status(log_id):
         "data": updated_log
     })
 
-# Archive Log By ID
+    # Archive Log By ID
 @app.route('/api/v1/logs/<int:log_id>/archive', methods=['PATCH'])
+@login_required
 def archive_log(log_id):
 
-# Verify the JWT token for authentication
+    # Verify the JWT token for authentication and check if the user has admin privileges
 
-    payload, error = verify_token()
-
-    if error:
-        return error
-    
+    payload, error = verify_token() 
     if payload["role"] != "admin":
 
         return jsonify({
@@ -516,7 +502,7 @@ def archive_log(log_id):
         }), 403
 
 
-# Connect to the database and check if the log exists and is resolved before archiving
+    # Connect to the database and check if the log exists and is resolved before archiving
 
     connection = get_db_connection()
 
@@ -584,18 +570,12 @@ def archive_log(log_id):
         "data": updated_log
     })
 
-# Devices Endpoint
+    # Devices Endpoint
 @app.route('/api/v1/devices', methods=(["GET", "POST"]))
+@login_required
 def register_device():
 
-# Verify the JWT token for authentication
-
-    payload, error = verify_token()
-
-    if error:
-        return error
-
-# GET METHOD - Retrieve All Devices with Optional Pagination and Filtering
+    # GET METHOD - Retrieve All Devices with Optional Pagination and Filtering
 
     if request.method == 'GET':
         connection = get_db_connection()
@@ -688,19 +668,12 @@ def register_device():
         }
     }), 201
 
-# Retrieve Single Device By ID
+    # Retrieve Single Device By ID
 @app.route('/api/v1/devices/<int:device_id>', methods=['GET'])
+@login_required
 def get_single_device(device_id):
 
-
-# Verify the JWT token for authentication
-
-    payload, error = verify_token()
-
-    if error:
-        return error
-
-# Connect to the database and check if the device exists before retrieving details
+    # Connect to the database and check if the device exists before retrieving details
 
     connection = get_db_connection()
 
@@ -738,15 +711,9 @@ def get_single_device(device_id):
 
 # Update Device Status
 @app.route('/api/v1/devices/<int:device_id>/status', methods=['PATCH'])
+@login_required
 def update_device_status(device_id):
 
-
-# Verify the JWT token for authentication
-
-    payload, error = verify_token()
-
-    if error:
-        return error
 
     data = request.get_json()
 
@@ -819,18 +786,11 @@ def update_device_status(device_id):
         }
     })
 
-# Retrieve Logs for a Specific Device
+    # Retrieve Logs for a Specific Device
 
 @app.route('/api/v1/devices/<int:device_id>/logs', methods=['GET'])
+@login_required
 def get_device_logs(device_id):
-
-
-# Verify the JWT token for authentication
-
-    payload, error = verify_token()
-
-    if error:
-        return error
 
 # Connect to the database and check if the device exists before retrieving logs
 
@@ -947,21 +907,12 @@ def verify_token():
             }),
             401
         )
-
-
-
-
+    
     # Dashboard Statistics Endpoint
 @app.route('/api/v1/dashboard/stats', methods=['GET'])
+@login_required
 def dashboard_stats():
 
-    # Verify the JWT token for authentication
-    payload, error = verify_token()
-
-
-    if error:
-        return error
-    
     # Connect to the database and retrieve metrics for the dashboard
 
     connection = get_db_connection()
@@ -973,6 +924,7 @@ def dashboard_stats():
     )
 
     #Device metrics for dashboard
+    
     total_devices = cursor.fetchone()[0]
 
     cursor.execute(
