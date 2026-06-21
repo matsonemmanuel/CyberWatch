@@ -7,6 +7,8 @@ import jwt
 
 from functools import wraps
 
+from flask import g
+
 from jwt.exceptions import (
     ExpiredSignatureError,
     InvalidTokenError
@@ -52,17 +54,6 @@ def get_db_connection():
     connection.row_factory = sqlite3.Row
 
     return connection
-
-
-
-# Home Endpoint
-@app.route('/api/v1/')
-def home():
-
-    return jsonify({
-        "status": "success",
-        "message": "CyberWatch API Version 1 Running Successfully"
-    })
 
     # Token Verification Function
 def verify_token():
@@ -132,10 +123,46 @@ def login_required(f):
 
         if error:
             return error
+        
+        g.current_user = payload
 
         return f(*args, **kwargs)
 
     return decorated_function
+
+    # Decorator to Require Admin Role for Certain Endpoints
+
+def admin_required(f):
+
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+
+        payload, error = verify_token()
+
+        if error:
+            return error
+
+        if payload["role"] != "admin":
+
+            return jsonify({
+                "status": "error",
+                "message": "Access denied"
+            }), 403
+
+        return f(*args, **kwargs)
+
+    return decorated_function
+
+# Home Endpoint
+@app.route('/api/v1/')
+def home():
+
+    return jsonify({
+        "status": "success",
+        "message": "CyberWatch API Version 1 Running Successfully"
+    })
+
+
 
     # Logs Endpoint
 @app.route('/api/v1/logs', methods=['GET', 'POST'])
@@ -547,19 +574,8 @@ def update_status(log_id):
 
     # Archive Log By ID
 @app.route('/api/v1/logs/<int:log_id>/archive', methods=['PATCH'])
-@login_required
+@admin_required
 def archive_log(log_id):
-
-    # Verify the JWT token for authentication and check if the user has admin privileges
-
-    payload, error = verify_token() 
-    if payload["role"] != "admin":
-
-        return jsonify({
-            "status": "error",
-            "message": "Access denied"
-        }), 403
-
 
     # Connect to the database and check if the log exists and is resolved before archiving
 
@@ -914,6 +930,7 @@ def get_device_logs(device_id):
 @app.route('/api/v1/dashboard/stats', methods=['GET'])
 @login_required
 def dashboard_stats():
+
 
     # Connect to the database and retrieve metrics for the dashboard
 
