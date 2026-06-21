@@ -588,6 +588,79 @@ def get_user(user_id):
         }
     }), 200
 
+    # Update User Role Endpoint
+
+@app.route('/api/v1/users/<int:user_id>/role', methods=['PATCH'])
+@admin_required
+def update_user_role(user_id):
+
+    data = request.get_json()
+
+    role = data.get("role")
+
+    # Validate role
+
+    allowed_roles = [
+        "admin",
+        "analyst"
+    ]
+
+    if role not in allowed_roles:
+
+        return jsonify({
+            "status": "error",
+            "message": "Invalid role"
+        }), 400
+
+    connection = get_db_connection()
+
+    cursor = connection.cursor()
+
+    # Check if user exists
+
+    cursor.execute(
+        """
+        SELECT id
+        FROM users
+        WHERE id = ?
+        """,
+        (user_id,)
+    )
+
+    user = cursor.fetchone()
+
+    if not user:
+
+        connection.close()
+
+        return jsonify({
+            "status": "error",
+            "message": "User not found"
+        }), 404
+
+    # Update role
+
+    cursor.execute(
+        """
+        UPDATE users
+        SET role = ?
+        WHERE id = ?
+        """,
+        (
+            role,
+            user_id
+        )
+    )
+
+    connection.commit()
+
+    connection.close()
+
+    return jsonify({
+        "status": "success",
+        "message": f"User role updated to {role}"
+    }), 200
+
     #LOGS AND DEVICES ENDPOINTS
 
     # Logs Endpoint
