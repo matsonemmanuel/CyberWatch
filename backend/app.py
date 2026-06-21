@@ -498,6 +498,8 @@ def change_password():
 
     #USER MANAGEMENT ENDPOINTS
 
+    # Get All Users Endpoint
+
 @app.route('/api/v1/users', methods=['GET'])
 @admin_required
 def get_users():
@@ -539,6 +541,52 @@ def get_users():
         "count": len(user_list),
         "data": user_list
     })
+
+    # Get Single User By ID Endpoint
+
+@app.route('/api/v1/users/<int:user_id>', methods=['GET'])
+@admin_required
+def get_user(user_id):
+
+    connection = get_db_connection()
+
+    cursor = connection.cursor()
+
+    cursor.execute(
+        """
+        SELECT
+            id,
+            username,
+            email,
+            role,
+            created_at
+        FROM users
+        WHERE id = ?
+        """,
+        (user_id,)
+    )
+
+    user = cursor.fetchone()
+
+    connection.close()
+
+    if not user:
+
+        return jsonify({
+            "status": "error",
+            "message": "User not found"
+        }), 404
+
+    return jsonify({
+        "status": "success",
+        "data": {
+            "id": user["id"],
+            "username": user["username"],
+            "email": user["email"],
+            "role": user["role"],
+            "created_at": user["created_at"]
+        }
+    }), 200
 
     #LOGS AND DEVICES ENDPOINTS
 
