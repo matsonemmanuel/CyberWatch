@@ -64,7 +64,66 @@ def home():
         "message": "CyberWatch API Version 1 Running Successfully"
     })
 
-# Decorator to Require Login for Certain Endpoints
+    # Token Verification Function
+def verify_token():
+
+    auth_header = request.headers.get("Authorization")
+
+    if not auth_header:
+
+        return None, (
+            jsonify({
+                "status": "error",
+                "message": "Authorization token is missing"
+            }),
+            401
+        )
+
+    if not auth_header.startswith("Bearer "):
+
+        return None, (
+            jsonify({
+                "status": "error",
+                "message": "Invalid authorization format"
+            }),
+            401
+        )
+
+    token = auth_header.split(" ")[1]
+
+    # Verify the JWT token
+
+    try:
+
+        payload = jwt.decode(
+            token,
+            JWT_SECRET_KEY,
+            algorithms=["HS256"]
+        )
+
+        return payload, None
+
+    except ExpiredSignatureError:
+
+        return None, (
+            jsonify({
+                "status": "error",
+                "message": "Token has expired"
+            }),
+            401
+        )
+
+    except InvalidTokenError:
+
+        return None, (
+            jsonify({
+                "status": "error",
+                "message": "Invalid token"
+            }),
+            401
+        )
+    
+    # Decorator to Require Login for Certain Endpoints
 
 def login_required(f):
     @wraps(f)
@@ -849,64 +908,7 @@ def get_device_logs(device_id):
         "logs": logs
     })
 
-# Token Verification Function
-def verify_token():
 
-    auth_header = request.headers.get("Authorization")
-
-    if not auth_header:
-
-        return None, (
-            jsonify({
-                "status": "error",
-                "message": "Authorization token is missing"
-            }),
-            401
-        )
-
-    if not auth_header.startswith("Bearer "):
-
-        return None, (
-            jsonify({
-                "status": "error",
-                "message": "Invalid authorization format"
-            }),
-            401
-        )
-
-    token = auth_header.split(" ")[1]
-
-# Verify the JWT token
-
-    try:
-
-        payload = jwt.decode(
-            token,
-            JWT_SECRET_KEY,
-            algorithms=["HS256"]
-        )
-
-        return payload, None
-
-    except ExpiredSignatureError:
-
-        return None, (
-            jsonify({
-                "status": "error",
-                "message": "Token has expired"
-            }),
-            401
-        )
-
-    except InvalidTokenError:
-
-        return None, (
-            jsonify({
-                "status": "error",
-                "message": "Invalid token"
-            }),
-            401
-        )
     
     # Dashboard Statistics Endpoint
 @app.route('/api/v1/dashboard/stats', methods=['GET'])
