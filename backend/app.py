@@ -495,6 +495,51 @@ def change_password():
         "message": "Password changed successfully"
     }), 200
 
+
+    #USER MANAGEMENT ENDPOINTS
+
+@app.route('/api/v1/users', methods=['GET'])
+@admin_required
+def get_users():
+
+    connection = get_db_connection()
+
+    cursor = connection.cursor()
+
+    cursor.execute(
+        """
+        SELECT
+            id,
+            username,
+            email,
+            role,
+            created_at
+        FROM users
+        """
+    )
+
+    users = cursor.fetchall()
+
+    connection.close()
+
+    user_list = []
+
+    for user in users:
+
+        user_list.append({
+            "id": user["id"],
+            "username": user["username"],
+            "email": user["email"],
+            "role": user["role"],
+            "created_at": user["created_at"]
+        })
+
+    return jsonify({
+        "status": "success",
+        "count": len(user_list),
+        "data": user_list
+    })
+
     #LOGS AND DEVICES ENDPOINTS
 
     # Logs Endpoint
