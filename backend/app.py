@@ -1232,5 +1232,40 @@ def login_user():
             "role": user["role"]
         }
 })
+
+    # Get Current User Endpoint
+
+@app.route('/api/v1/auth/me', methods=['GET'])
+@login_required
+def get_current_user():
+
+    connection = get_db_connection()
+
+    cursor = connection.cursor()
+
+    cursor.execute(
+        """
+        SELECT *
+        FROM users
+        WHERE id = ?
+        """,
+        (g.current_user["user_id"],)
+    )
+
+    user = cursor.fetchone()
+
+    connection.close()
+
+    return jsonify({
+        "status": "success",
+        "data": {
+            "id": user["id"],
+            "username": user["username"],
+            "email": user["email"],
+            "role": user["role"],
+            "created_at": user["created_at"]
+        }
+    })
+
 if __name__ == '__main__':
     app.run(debug=True)
