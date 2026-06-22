@@ -563,6 +563,13 @@ def get_users():
 
     cursor = connection.cursor()
 
+    # Optional search functionality for filtering users by username or email
+
+    search = request.args.get(
+        "search",
+        ""
+    )
+
     cursor.execute(
         """
         SELECT
@@ -572,7 +579,16 @@ def get_users():
             role,
             created_at
         FROM users
-        """
+        WHERE
+            username LIKE ?
+            OR email LIKE ?
+            OR role LIKE ?
+        """,
+        (
+            f"%{search}%",
+            f"%{search}%",
+            f"%{search}%"
+        )
     )
 
     users = cursor.fetchall()
@@ -737,6 +753,7 @@ def logs():
         severity = request.args.get('severity')
         status = request.args.get('status')
         archived = request.args.get('archived')
+        search = request.args.get('search')
         page = int(request.args.get('page', 1))
         limit = int(request.args.get('limit', 10))
         offset = (page - 1) * limit
@@ -752,6 +769,7 @@ def logs():
 
         count_cursor = connection.cursor()
 
+    
         count_cursor.execute(
                 """
                 SELECT COUNT(*)
@@ -799,6 +817,25 @@ def logs():
         if status:
             query += " AND logs.status = ?"
             params.append(status)
+
+    # Optional search functionality for filtering logs by event, severity, status, or device hostname
+
+            if search:
+                query += """
+                    AND (
+                        logs.event LIKE ?
+                        OR logs.severity LIKE ?
+                        OR logs.status LIKE ?
+                        OR devices.hostname LIKE ?
+                    )
+                """
+
+                params.extend([
+                    f"%{search}%",
+                    f"%{search}%",
+                    f"%{search}%",
+                    f"%{search}%"
+                ])
 
 
         # Pagination   
@@ -1227,8 +1264,31 @@ def register_device():
 
         cursor = connection.cursor()
 
+        # Optional search functionality for filtering devices by hostname, IP address, or operating system
+
+        search = request.args.get(
+            "search",
+            ""
+        )
+
+    # Pagination parameters
+
         cursor.execute(
-            "SELECT * FROM devices"
+            """
+            SELECT *
+            FROM devices
+            WHERE
+                hostname LIKE ?
+                OR ip_address LIKE ?
+                OR operating_system LIKE ?
+                OR status LIKE ?
+            """,
+            (
+                f"%{search}%",
+                f"%{search}%",
+                f"%{search}%",
+                f"%{search}%"
+            )
         )
 
         rows = cursor.fetchall()
@@ -1297,7 +1357,7 @@ def register_device():
     connection.commit()
 
     # Log the device registration activity for auditing purposes
-    
+
     log_activity(
         g.current_user["user_id"],
         g.current_user["username"],
