@@ -201,6 +201,18 @@ def home():
         "message": "CyberWatch API Version 1 Running Successfully"
     })
 
+
+# Health Check Endpoint
+
+@app.route('/api/v1/health', methods=['GET'])
+def health_check():
+
+    return jsonify({
+        "status": "success",
+        "message": "CyberWatch API is running"
+    }), 200
+
+
     #AUTHENTICATION ENDPOINTS
 
     # User Registration Endpoint
@@ -452,6 +464,19 @@ def get_current_user():
             "created_at": user["created_at"]
         }
     })
+
+
+    # Logout Endpoint
+
+@app.route('/api/v1/auth/logout', methods=['POST'])
+@login_required
+def logout_user():
+
+    return jsonify({
+        "status": "success",
+        "message": "Logout successful"
+    }), 200
+
 
     # Change Password Endpoint
 
