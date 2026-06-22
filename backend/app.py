@@ -472,11 +472,19 @@ def get_current_user():
 @login_required
 def logout_user():
 
+
+    # Log the logout activity for auditing purposes
+
+    log_activity(
+        g.current_user["user_id"],
+        g.current_user["username"],
+        "User logged out"
+    )
+
     return jsonify({
         "status": "success",
         "message": "Logout successful"
     }), 200
-
 
     # Change Password Endpoint
 
