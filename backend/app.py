@@ -142,6 +142,8 @@ def admin_required(f):
         if error:
             return error
 
+        g.current_user = payload
+
         if payload["role"] != "admin":
 
             return jsonify({
@@ -152,6 +154,43 @@ def admin_required(f):
         return f(*args, **kwargs)
 
     return decorated_function
+
+    # Function to Log User Activities for Auditing Purposes
+def log_activity(
+    user_id,
+    username,
+    action
+):
+
+    connection = get_db_connection()
+
+    cursor = connection.cursor()
+
+    timestamp = datetime.now(
+        timezone.utc
+    ).isoformat()
+
+    cursor.execute(
+        """
+        INSERT INTO audit_logs (
+            user_id,
+            username,
+            action,
+            timestamp
+        )
+        VALUES (?, ?, ?, ?)
+        """,
+        (
+            user_id,
+            username,
+            action,
+            timestamp
+        )
+    )
+
+    connection.commit()
+
+    connection.close()
 
 # Home Endpoint
 @app.route('/api/v1/')
@@ -357,6 +396,14 @@ def login_user():
     algorithm="HS256"
     )
 
+    # Add audit log here
+
+    log_activity(
+        user["id"],
+        user["username"],
+        "User logged in"
+    )
+
     # User found
     connection.close()
 
@@ -487,6 +534,14 @@ def change_password():
     # Save changes
 
     connection.commit()
+
+    # Log the password change activity for auditing purposes
+
+    log_activity(
+        g.current_user["user_id"],
+        g.current_user["username"],
+        "Password changed"
+    )
 
     connection.close()
 
@@ -653,6 +708,14 @@ def update_user_role(user_id):
     )
 
     connection.commit()
+
+# Log the role change activity for auditing purposes
+
+    log_activity(
+        g.current_user["user_id"],
+        g.current_user["username"],
+        f"Changed user {user_id} role to {role}"
+    )
 
     connection.close()
 
@@ -1118,6 +1181,14 @@ def archive_log(log_id):
 
     connection.commit()
 
+    # Log the archiving activity for auditing purposes
+
+    log_activity(
+        g.current_user["user_id"],
+        g.current_user["username"],
+        f"Archived log {log_id}"
+    )
+
     cursor.execute(
         "SELECT * FROM logs WHERE id = ?",
         (log_id,)
@@ -1224,6 +1295,14 @@ def register_device():
     )
 
     connection.commit()
+
+    # Log the device registration activity for auditing purposes
+    
+    log_activity(
+        g.current_user["user_id"],
+        g.current_user["username"],
+        f"Registered device {hostname}"
+    )
 
     device_id = cursor.lastrowid
 
@@ -1526,4 +1605,5 @@ print(app.url_map)
 
    
 if __name__ == '__main__':
+
     app.run(debug=True)
