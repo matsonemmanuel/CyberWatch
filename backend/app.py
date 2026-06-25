@@ -17,6 +17,7 @@ from jwt.exceptions import (
 from datetime import timedelta
 
 from flask import Flask, jsonify, request 
+from flask_cors import CORS
 
 from datetime import datetime, timezone
 import sqlite3
@@ -26,6 +27,17 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
+
+    # CORS Configuration
+
+CORS(
+    app,
+    resources={
+        r"/api/*": {
+            "origins": "http://localhost:5173"
+        }
+    }
+)
 
 # JWT Configuration
 
