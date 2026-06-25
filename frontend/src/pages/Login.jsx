@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "../styles/login.css";
 import cyberwatchLogo from "../assets/cyberwatch-logo.png";
 
@@ -6,6 +7,8 @@ function Login() {
 
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+
+    const navigate = useNavigate();
 
     const handleLogin = async (event) => {
 
@@ -29,9 +32,35 @@ function Login() {
         }
     );
 
+    // Check if the response is successful
+
     const data = await response.json();
 
-    console.log(data);
+    if (data.status === "success") {
+
+        localStorage.setItem("token", data.token);
+
+        localStorage.setItem(
+            "user",
+            JSON.stringify(data.user)
+        );
+
+        console.log("Login Successful!");
+
+        console.log("Token:", data.token);
+
+        console.log("User:", data.user);
+
+        // Redirect to the dashboard page
+
+        navigate("/dashboard");
+
+    }
+    else {
+
+        console.log(data.message);
+
+    }
 
 } catch (error) {
 

@@ -1,0 +1,73 @@
+.topbar{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding: 18px 30px;
+
+    border-bottom:1px solid #334155;
+
+    background:#111C31;
+
+}
+
+.topbar-left h1{
+
+    margin:0;
+
+    color:#F8FAFC;
+
+    font-size:2rem;
+
+}
+
+.topbar-left p{
+
+    margin-top:8px;
+
+    color:#A8B3C7;
+
+    font-size:0.95rem;
+
+}
+
+.topbar-right{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:20px;
+
+}
+
+.status{
+
+    background:#123B2A;
+
+    color:#4ADE80;
+
+    padding:10px 18px;
+
+    border-radius:30px;
+
+    font-weight:600;
+
+}
+
+.admin{
+
+    background:#1E293B;
+
+    padding:10px 18px;
+
+    border-radius:30px;
+
+    color:white;
+
+    font-weight:600;
+
+}

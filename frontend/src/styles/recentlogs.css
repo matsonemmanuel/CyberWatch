@@ -1,0 +1,107 @@
+.recent-logs{
+
+    background:#1E293B;
+
+    margin-top:30px;
+
+    border-radius:16px;
+
+    padding:24px;
+
+    border:1px solid #334155;
+
+    box-shadow:0 8px 24px rgba(0,0,0,.18);
+
+}
+
+.recent-logs h2{
+
+    margin-top:0;
+
+    margin-bottom:25px;
+
+    color:#F8FAFC;
+
+}
+
+.log-item{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:18px 0;
+
+    border-bottom:1px solid #334155;
+
+}
+
+.log-item:last-child{
+
+    border-bottom:none;
+
+}
+
+.log-item h4{
+
+    margin:0;
+
+    color:white;
+
+}
+
+.log-item p{
+
+    margin-top:6px;
+
+    color:#94A3B8;
+
+    font-size:.9rem;
+
+}
+
+.severity{
+
+    padding:6px 14px;
+
+    border-radius:20px;
+
+    font-size:.8rem;
+
+    font-weight:bold;
+
+}
+
+.low{
+
+    background:#1E3A5F;
+
+    color:#60A5FA;
+
+}
+
+.medium{
+
+    background:#3A3215;
+
+    color:#FACC15;
+
+}
+
+.high{
+
+    background:#4A1D1D;
+
+    color:#FB7185;
+
+}
+
+.critical{
+
+    background:#5A1010;
+
+    color:#EF4444;
+
+}
