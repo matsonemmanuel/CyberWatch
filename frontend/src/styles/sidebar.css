@@ -15,11 +15,21 @@
 }
 
 .sidebar-header {
-
-    padding: 30px 20px;
-
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 25px 15px;
     border-bottom: 1px solid #334155;
+}
 
+.sidebar-logo {
+    width: 170px;
+    height: auto;
+    transition: transform 0.3s ease;
+}
+
+.sidebar-logo:hover {
+    transform: scale(1.03);
 }
 
 .sidebar-header h2 {
@@ -62,17 +72,29 @@
 
 .sidebar-menu li {
 
+    margin: 4px 12px;
+
+}
+
+.sidebar-menu a {
+
+    display: block;
+
     padding: 15px 20px;
 
-    cursor: pointer;
+    color: #F8FAFC;
 
-    transition: 0.3s;
+    text-decoration: none;
+
+    border-radius: 10px;
+
+    transition: all 0.3s ease;
 
     font-size: 1rem;
 
 }
 
-.sidebar-menu li:hover {
+.sidebar-menu a:hover {
 
     background: #334155;
 
@@ -80,10 +102,12 @@
 
 }
 
-.sidebar-menu .active {
+.sidebar-menu a.active {
 
     background: #06B6D4;
 
     color: white;
+
+    font-weight: 600;
 
 }

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/login.css";
-import cyberwatchLogo from "../assets/cyberwatch-logo.png";
+import cyberwatchLogo from "../assets/cyberwatchlogo-rm.png";
 
 function Login() {
 
@@ -80,9 +80,7 @@ function Login() {
                     className="branding-logo"
                 />
 
-                <p className="branding-tagline">
-                    - Monitor. Detect. Protect -
-                </p>
+               
             </div>
 
             <div className="login-card">

@@ -1,4 +1,7 @@
+import cyberwatchLogo from "../assets/cyberwatchlogo-rm.png";
+import { NavLink } from "react-router-dom";
 import "../styles/sidebar.css";
+
 
 function Sidebar() {
 
@@ -8,9 +11,11 @@ function Sidebar() {
 
             <div className="sidebar-header">
 
-                <h2>CyberWatch</h2>
-
-                <p>- Monitor.Detect.Protect -</p>
+                <img
+                    src={cyberwatchLogo}
+                    alt="CyberWatch Logo"
+                    className="sidebar-logo"
+                />
 
             </div>
 
@@ -18,33 +23,46 @@ function Sidebar() {
 
                 <ul>
 
-                    <li className="active">
-                        🏠 Dashboard
+                    <li>
+
+                        <NavLink to="/dashboard">
+
+                            🏠 Dashboard
+
+                        </NavLink>
+
                     </li>
 
                     <li>
-                        🖥 Devices
+
+                        <NavLink to="/devices">
+
+                            🖥 Devices
+
+                        </NavLink>
+
                     </li>
 
-                    <li>
+                    
+                    <NavLink to="/logs">
                         📋 Security Logs
-                    </li>
+                    </NavLink>
 
-                    <li>
+                    <NavLink to="/alerts">
                         🚨 Alerts
-                    </li>
+                    </NavLink>
 
-                    <li>
+                    <NavLink to="/users">
                         👥 Users
-                    </li>
+                    </NavLink>
 
-                    <li>
+                    <NavLink to="/audit">
                         📝 Audit Trail
-                    </li>
+                    </NavLink>
 
-                    <li>
+                    <NavLink to="/settings">
                         ⚙ Settings
-                    </li>
+                    </NavLink>
 
                 </ul>
 
