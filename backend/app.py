@@ -1364,8 +1364,9 @@ def register_device():
     hostname = data.get('hostname')
     ip_address = data.get('ip_address')
     operating_system = data.get('operating_system')
+    status = data.get('status', 'active')
 
-    if not hostname or not ip_address or not operating_system:
+    if not hostname or not ip_address or not operating_system or not status:
 
         return jsonify({
             "status": "error",
@@ -1387,14 +1388,16 @@ def register_device():
             hostname,
             ip_address,
             operating_system,
+            status,
             registered_at
         )
-        VALUES (?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?)
         ''',
         (
             hostname,
             ip_address,
             operating_system,
+            status,
             timestamp
         )
     )
@@ -1421,7 +1424,7 @@ def register_device():
             "hostname": hostname,
             "ip_address": ip_address,
             "operating_system": operating_system,
-            "status": "active",
+            "status": status,
             "registered_at": timestamp
         }
     }), 201
