@@ -1,0 +1,123 @@
+.device-toolbar{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:20px;
+
+    width:100%;
+
+    margin:8px 0 30px;
+
+}
+
+/* Search Section */
+
+.search-section{
+
+    flex:0 0 65%;
+
+}
+
+.search-section input{
+
+    width:100%;
+
+    height:48px;
+
+    padding:0 18px;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:#273449;
+
+    color:#F8FAFC;
+
+    font-size:15px;
+
+    transition:0.3s;
+
+}
+
+.search-section input::placeholder{
+
+    color:#94A3B8;
+
+}
+
+.search-section input:focus{
+
+    outline:none;
+
+    box-shadow:0 0 0 2px #06B6D4;
+
+}
+
+/* Right Side */
+
+.toolbar-actions{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+}
+
+/* Dropdown */
+
+.toolbar-actions select {
+
+    width: 150px;
+
+    padding: 0 38px 0 15px;
+
+    height: 46px;
+
+    border: none;
+
+    border-radius: 10px;
+
+    background: #273449;
+
+    color: white;
+
+    cursor: pointer;
+
+}
+
+/* Button */
+
+.add-device-btn{
+
+    height:48px;
+
+    padding:0 24px;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:#06B6D4;
+
+    color:white;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+.add-device-btn:hover{
+
+    background:#0891B2;
+
+}

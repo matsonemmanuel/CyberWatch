@@ -1,6 +1,9 @@
 import "../styles/devicelist.css";
+import { useNavigate } from "react-router-dom";
 
 function DeviceList({ devices }) {
+
+    const navigate = useNavigate();
 
     return (
 
@@ -25,6 +28,7 @@ function DeviceList({ devices }) {
                         <th>Operating System</th>
                         <th>Status</th>
                         <th>Registered</th>
+                        <th>Actions</th>
 
                     </tr>
 
@@ -32,37 +36,86 @@ function DeviceList({ devices }) {
 
                 <tbody>
 
-                    {devices.map((device) => (
+                    {devices.length > 0 ? (
 
-                        <tr key={device.id}>
+                        devices.map((device) => (
 
-                            <td>{device.hostname}</td>
+                            <tr key={device.id}>
 
-                            <td>{device.ip_address}</td>
+                                <td>{device.hostname}</td>
 
-                            <td>{device.operating_system}</td>
+                                <td>{device.ip_address}</td>
 
-                            <td>
+                                <td>{device.operating_system}</td>
 
-                                <span className={`status-badge ${device.status}`}>
+                                <td>
+                                    <span className={`status-badge ${device.status}`}>
+                                        {device.status}
+                                    </span>
+                                </td>
 
-                                    {device.status}
+                                <td>
+                                    {new Date(device.registered_at).toLocaleDateString()}
+                                </td>
 
-                                </span>
+                                <td>
 
-                            </td>
+                                    <div className="action-buttons">
 
-                            <td>
+                                        <button
+                                            className="action-btn view-btn"
+                                            title="View Device"
+                                            onClick={() => navigate(`/devices/${device.id}`)}
+                                        >
+                                            👁
+                                        </button>
 
-                                {new Date(
-                                    device.registered_at
-                                ).toLocaleDateString()}
+                                        <button
+                                            className="action-btn edit-btn"
+                                            title="Edit Device"
+                                        >
+                                            ✏️
+                                        </button>
+
+                                        <button
+                                            className="action-btn disable-btn"
+                                            title={
+                                                device.status === "disabled"
+                                                    ? "Enable Device"
+                                                    : "Disable Device"
+                                            }
+                                        >
+                                            {device.status === "disabled" ? "✅" : "🚫"}
+                                        </button>
+
+                                        <button
+                                            className="action-btn delete-btn"
+                                            title="Delete Device"
+                                        >
+                                            🗑
+                                        </button>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        ))
+
+                    ) : (
+
+                        <tr>
+
+                            <td colSpan="6" style={{ textAlign: "center", padding: "30px" }}>
+
+                                No devices found.
 
                             </td>
 
                         </tr>
 
-                    ))}
+                    )}
 
                 </tbody>
 

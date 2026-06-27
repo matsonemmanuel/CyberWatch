@@ -29,3 +29,15 @@
     margin-top:30px;
 
 }
+
+.devices-content {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 25px;
+
+    margin-top: 25px;
+
+}
