@@ -1,4 +1,6 @@
 
+from re import search
+
 from flask import (
     Blueprint,
     jsonify,
@@ -7,6 +9,12 @@ from flask import (
 )
 
 from database.db import get_db_connection
+
+from services.user_services import (
+    get_users_service,
+    get_user_service,
+    update_user_role_service
+)
 
 from utils.auth import (
     admin_required
@@ -27,60 +35,12 @@ user_bp = Blueprint(
 @user_bp.route('/api/v1/users', methods=['GET'])
 @admin_required
 def get_users():
+    search = request.args.get("search", "")
 
-    connection = get_db_connection()
+    result, status_code = get_users_service(search)
 
-    cursor = connection.cursor()
+    return jsonify(result), status_code
 
-    # Optional search functionality for filtering users by username or email
-
-    search = request.args.get(
-        "search",
-        ""
-    )
-
-    cursor.execute(
-        """
-        SELECT
-            id,
-            username,
-            email,
-            role,
-            created_at
-        FROM users
-        WHERE
-            username LIKE ?
-            OR email LIKE ?
-            OR role LIKE ?
-        """,
-        (
-            f"%{search}%",
-            f"%{search}%",
-            f"%{search}%"
-        )
-    )
-
-    users = cursor.fetchall()
-
-    connection.close()
-
-    user_list = []
-
-    for user in users:
-
-        user_list.append({
-            "id": user["id"],
-            "username": user["username"],
-            "email": user["email"],
-            "role": user["role"],
-            "created_at": user["created_at"]
-        })
-
-    return jsonify({
-        "status": "success",
-        "count": len(user_list),
-        "data": user_list
-    })
 
     # Get Single User By ID Endpoint
 
@@ -88,45 +48,10 @@ def get_users():
 @admin_required
 def get_user(user_id):
 
-    connection = get_db_connection()
+    result, status_code = get_user_service(user_id)
 
-    cursor = connection.cursor()
+    return jsonify(result), status_code
 
-    cursor.execute(
-        """
-        SELECT
-            id,
-            username,
-            email,
-            role,
-            created_at
-        FROM users
-        WHERE id = ?
-        """,
-        (user_id,)
-    )
-
-    user = cursor.fetchone()
-
-    connection.close()
-
-    if not user:
-
-        return jsonify({
-            "status": "error",
-            "message": "User not found"
-        }), 404
-
-    return jsonify({
-        "status": "success",
-        "data": {
-            "id": user["id"],
-            "username": user["username"],
-            "email": user["email"],
-            "role": user["role"],
-            "created_at": user["created_at"]
-        }
-    }), 200
 
     # Update User Role Endpoint
 
@@ -136,75 +61,11 @@ def update_user_role(user_id):
 
     data = request.get_json()
 
-    role = data.get("role")
-
-    # Validate role
-
-    allowed_roles = [
-        "admin",
-        "analyst"
-    ]
-
-    if role not in allowed_roles:
-
-        return jsonify({
-            "status": "error",
-            "message": "Invalid role"
-        }), 400
-
-    connection = get_db_connection()
-
-    cursor = connection.cursor()
-
-    # Check if user exists
-
-    cursor.execute(
-        """
-        SELECT id
-        FROM users
-        WHERE id = ?
-        """,
-        (user_id,)
-    )
-
-    user = cursor.fetchone()
-
-    if not user:
-
-        connection.close()
-
-        return jsonify({
-            "status": "error",
-            "message": "User not found"
-        }), 404
-
-    # Update role
-
-    cursor.execute(
-        """
-        UPDATE users
-        SET role = ?
-        WHERE id = ?
-        """,
-        (
-            role,
-            user_id
-        )
-    )
-
-    connection.commit()
-
-    # Log the role change activity for auditing purposes
-
-    log_activity(
+    result, status_code = update_user_role_service(
+        user_id,
         g.current_user["user_id"],
         g.current_user["username"],
-        f"Changed user {user_id} role to {role}"
+        data
     )
 
-    connection.close()
-
-    return jsonify({
-        "status": "success",
-        "message": f"User role updated to {role}"
-    }), 200
+    return jsonify(result), status_code
