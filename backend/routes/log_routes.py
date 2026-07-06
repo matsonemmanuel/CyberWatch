@@ -6,6 +6,11 @@ from flask import (
     g
 )
 
+from services.log_services import (
+    get_logs_service,
+    create_log_service
+)
+
 from database.db import get_db_connection
 
 from utils.auth import (
@@ -26,240 +31,52 @@ log_bp = Blueprint(
 )
 
      # Logs Endpoint
-@log_bp.route('/api/v1/logs', methods=['GET', 'POST'])
+
+
+@log_bp.route('/api/v1/logs', methods=['GET'])
 @login_required
-def logs():
+def get_logs():
 
-    # GET METHOD
-    if request.method == 'GET':
+    severity = request.args.get("severity")
+    status = request.args.get("status")
+    archived = request.args.get("archived")
+    search = request.args.get("search")
+    page = int(request.args.get("page", 1))
+    limit = int(request.args.get("limit", 10))
 
-        severity = request.args.get('severity')
-        status = request.args.get('status')
-        archived = request.args.get('archived')
-        search = request.args.get('search')
-        page = int(request.args.get('page', 1))
-        limit = int(request.args.get('limit', 10))
-        offset = (page - 1) * limit
+    result, status_code = get_logs_service(
+        severity,
+        status,
+        archived,
+        search,
+        page,
+        limit
+    )
 
-        print("Page:", page)
-        print("Limit:", limit)
-        print("Offset:", offset)
+    return jsonify(result), status_code
 
-        print("Severity Filter:", severity)
-        connection = get_db_connection()
-        cursor = connection.cursor()
-        # First, get the total count of logs for pagination
-
-        count_cursor = connection.cursor()
-
-    
-        count_cursor.execute(
-                """
-                SELECT COUNT(*)
-                FROM logs
-                WHERE archived = 0
-                """
-            )
-
-        total_logs = count_cursor.fetchone()[0]
-
-        # Calculate total pages based on total logs and limit
-
-        total_pages = (total_logs + limit - 1) // limit
-
-        print("Total Logs:", total_logs)
-        print("Total Pages:", total_pages)
-
-        query = """
-            SELECT
-                logs.id,
-                logs.timestamp,
-                logs.event,
-                logs.severity,
-                logs.status,
-                logs.archived,
-                devices.id AS device_id,
-                devices.hostname,
-                devices.ip_address,
-                devices.operating_system
-            FROM logs
-            INNER JOIN devices
-            ON logs.device_id = devices.id
-        """
-        query += " WHERE 1=1"
-        params = []
-
-        if archived != 'true':
-
-           query += " AND logs.archived = 0"
-
-        if severity:
-            query += " AND logs.severity = ?"
-            params.append(severity)
-
-        if status:
-            query += " AND logs.status = ?"
-            params.append(status)
-
-    # Optional search functionality for filtering logs by event, severity, status, or device hostname
-
-            if search:
-                query += """
-                    AND (
-                        logs.event LIKE ?
-                        OR logs.severity LIKE ?
-                        OR logs.status LIKE ?
-                        OR devices.hostname LIKE ?
-                    )
-                """
-
-                params.extend([
-                    f"%{search}%",
-                    f"%{search}%",
-                    f"%{search}%",
-                    f"%{search}%"
-                ])
-
-
-        # Pagination   
-        query += " LIMIT ? OFFSET ?"
-        params.append(limit)
-        params.append(offset)
-
-        print("Final Query:", query)
-        print("Parameters:", params)
-
-        cursor.execute(query, params)
-
-        rows = cursor.fetchall()
-
-        connection.close()
-
-        logs = []
-
-        for row in rows:
-            logs.append({
-                "id": row["id"],
-                "timestamp": row["timestamp"],
-                "event": row["event"],
-                "severity": row["severity"],
-                "status": row["status"],
-                "archived": bool(row["archived"]),
-                "device": {
-                    "id": row["device_id"],
-                    "hostname": row["hostname"],
-                    "ip_address": row["ip_address"],
-                    "operating_system": row["operating_system"]
-                }
-            })
-
-        return jsonify({
-                "status": "success",
-
-                "page": page,
-                "limit": limit,
-
-                "total_logs": total_logs,
-                "total_pages": total_pages,
-
-                "logs": logs
-            })
 
     # POST METHOD
-    elif request.method == 'POST':
+
+@log_bp.route('/api/v1/logs', methods=['POST'])
+@login_required
+def create_log():
+    
 
         data = request.get_json()
 
-        if not data:
-            return jsonify({
-                "status": "error",
-                "message": "Invalid JSON payload"
-            }), 400
-
-        device_id = data.get('device_id')
-        event = data.get('event')
-        severity = data.get('severity')
-
-        if not device_id or not event or not severity:
-            return jsonify({
-                "status": "error",
-                "message": "All fields are required"
-            }), 400
-
-        connection = get_db_connection()
-        cursor = connection.cursor()
-
-        cursor.execute(
-            "SELECT * FROM devices WHERE id = ?",
-            (device_id,)
+        result, status_code = create_log_service(
+            g.current_user["user_id"],
+            g.current_user["username"],
+            data
         )
 
-        device = cursor.fetchone()
+        return jsonify(result), status_code
 
-        if not device:
-            connection.close()
-            return jsonify({
-                "status": "error",
-                "message": "Device not found"
-            }), 404
-
-        allowed_severity = ['low', 'medium', 'high']
-
-        if severity not in allowed_severity:
-            connection.close()
-            return jsonify({
-                "status": "error",
-                "message": "Invalid severity level"
-            }), 400
-
-        timestamp = datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')
-
-        new_log = {
-            "timestamp": timestamp,
-            "device_id": device_id,
-            "event": event,
-            "severity": severity,
-            "status": "open",
-            "archived": False
-        }
-
-        cursor.execute(
-            '''
-            INSERT INTO logs
-            (
-                timestamp,
-                device_id,
-                event,
-                severity,
-                status,
-                archived
-            )
-            VALUES (?, ?, ?, ?, ?, ?)
-            ''',
-            (
-                timestamp,
-                device_id,
-                event,
-                severity,
-                'open',
-                0
-            )
-        )
-
-
-        connection.commit()
-        new_log_id = cursor.lastrowid
-        connection.close()
-
-        new_log['id'] = new_log_id
-
-        return jsonify({
-            "status": "success",
-            "message": "Log received successfully",
-            "data": new_log
-        }), 201
-    
+            
     # Retrieve Single Log By ID
+
+    
 @log_bp.route('/api/v1/logs/<int:log_id>', methods=['GET'])
 @login_required
 def get_single_log(log_id):
