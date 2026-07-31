@@ -17,6 +17,7 @@ from jwt.exceptions import (
 from datetime import timedelta
 
 from flask import Flask, jsonify, request 
+
 from flask_cors import CORS
 
 from datetime import datetime, timezone
@@ -54,10 +55,14 @@ CORS(
     app,
     resources={
         r"/api/*": {
-            "origins": "http://localhost:5173"
+            "origins": [
+                "http://localhost:5173",
+                "http://localhost:5174"
+            ]
         }
     }
 )
+
     # Register Blueprints
 
 app.register_blueprint(auth_bp)

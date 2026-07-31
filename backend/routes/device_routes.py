@@ -17,10 +17,11 @@ from services.device_services import (
     register_device_service,
     get_devices_service,
     get_device_service,
+    update_device_service,
     update_device_status_service,
-    get_device_logs_service
+    get_device_logs_service,
+    delete_device_service
 )
-
 from utils.logger import log_activity
 
 from datetime import (
@@ -35,13 +36,21 @@ device_bp = Blueprint(
 
 # Devices Endpoint
 
-@device_bp.route('/api/v1/devices', methods=['GET'])
+@device_bp.route("/api/v1/devices", methods=["GET"])
 @login_required
 def get_devices():
 
     search = request.args.get("search", "")
 
-    result, status_code = get_devices_service(search)
+    page = int(request.args.get("page", 1))
+
+    per_page = int(request.args.get("per_page", 10))
+
+    result, status_code = get_devices_service(
+        search,
+        page,
+        per_page
+    )
 
     return jsonify(result), status_code
 
@@ -75,6 +84,23 @@ def get_single_device(device_id):
     return jsonify(result), status_code
 
 
+# Update Device Information
+
+@device_bp.route('/api/v1/devices/<int:device_id>', methods=['PUT'])
+@login_required
+def update_device(device_id):
+
+    data = request.get_json()
+
+    result, status_code = update_device_service(
+        device_id,
+        g.current_user["user_id"],
+        g.current_user["username"],
+        data
+    )
+
+    return jsonify(result), status_code
+
 
     # Update Device Status
 @device_bp.route('/api/v1/devices/<int:device_id>/status', methods=['PATCH'])
@@ -84,8 +110,27 @@ def update_device_status(device_id):
     data = request.get_json()
 
     result, status_code = update_device_status_service(
+        g.current_user["user_id"],
+        g.current_user["username"],
         device_id,
         data
+    )
+
+    return jsonify(result), status_code
+
+
+# Soft Delete Device
+
+@device_bp.route('/api/v1/devices/<int:device_id>', methods=['DELETE'])
+@login_required
+def delete_device(device_id):
+
+    result, status_code = delete_device_service(
+
+        g.current_user["user_id"],
+        g.current_user["username"],
+        device_id
+
     )
 
     return jsonify(result), status_code

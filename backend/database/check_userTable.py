@@ -1,14 +1,34 @@
 import sqlite3
 
-connection = sqlite3.connect('cyberwatch.db')
+connection = sqlite3.connect("cyberwatch.db")
+
+connection.row_factory = sqlite3.Row
 
 cursor = connection.cursor()
 
-cursor.execute(
-    "PRAGMA table_info(users)"
-)
+cursor.execute("""
+SELECT
+    id,
+    username,
+    email,
+    role,
+    created_at
+FROM users
+ORDER BY id
+""")
 
-for row in cursor.fetchall():
-    print(row)
+users = cursor.fetchall()
+
+print("\n========== REGISTERED USERS ==========\n")
+
+if not users:
+
+    print("No users found.")
+
+else:
+
+    for user in users:
+
+        print(dict(user))
 
 connection.close()

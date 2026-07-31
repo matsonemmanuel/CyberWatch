@@ -18,6 +18,9 @@ from jwt.exceptions import (
     InvalidTokenError
 )
 
+from datetime import datetime
+from datetime import timezone
+
 load_dotenv()
 
 JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
@@ -30,7 +33,12 @@ def verify_token():
 
     auth_header = request.headers.get("Authorization")
 
+    print("\n========== AUTH DEBUG ==========")
+    print("Authorization Header:", auth_header)
+
     if not auth_header:
+
+        print("No Authorization header received.")
 
         return None, (
             jsonify({
@@ -42,6 +50,8 @@ def verify_token():
 
     if not auth_header.startswith("Bearer "):
 
+        print("Authorization header format is invalid.")
+
         return None, (
             jsonify({
                 "status": "error",
@@ -52,7 +62,7 @@ def verify_token():
 
     token = auth_header.split(" ")[1]
 
-    # Verify the JWT token
+    print("JWT Token:", token)
 
     try:
 
@@ -62,9 +72,13 @@ def verify_token():
             algorithms=["HS256"]
         )
 
+        print("Decoded Payload:", payload)
+
         return payload, None
 
     except ExpiredSignatureError:
+
+        print("ERROR: Token has expired.")
 
         return None, (
             jsonify({
@@ -74,15 +88,18 @@ def verify_token():
             401
         )
 
-    except InvalidTokenError:
+    except ExpiredSignatureError:
 
-        return None, (
-            jsonify({
-                "status": "error",
-                "message": "Invalid token"
-            }),
-            401
-        )
+            print("Current UTC:", datetime.now(timezone.utc))
+            print("Token expired.")
+
+            return None, (
+                jsonify({
+                    "status": "error",
+                    "message": "Token has expired"
+                }),
+                401
+            )
     
     # Decorator to Require Login for Certain Endpoints
 

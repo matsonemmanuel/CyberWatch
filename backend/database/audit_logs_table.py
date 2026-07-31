@@ -16,18 +16,27 @@ connection = sqlite3.connect(
 
 cursor = connection.cursor()
 
+# Recreate the audit_logs table
+
 cursor.execute("""
-CREATE TABLE IF NOT EXISTS audit_logs (
+DROP TABLE IF EXISTS audit_logs
+""")
+
+cursor.execute("""
+CREATE TABLE audit_logs (
 
     id INTEGER PRIMARY KEY AUTOINCREMENT,
 
-    user_id INTEGER NOT NULL,
+    user_id INTEGER,
 
     username TEXT NOT NULL,
 
     action TEXT NOT NULL,
 
-    timestamp TEXT NOT NULL
+    timestamp TEXT NOT NULL,
+
+    FOREIGN KEY (user_id)
+    REFERENCES users(id)
 )
 """)
 
@@ -36,5 +45,5 @@ connection.commit()
 connection.close()
 
 print(
-    "audit_logs table created successfully"
+    "Audit logs table recreated successfully."
 )
