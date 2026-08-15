@@ -1,7 +1,23 @@
 import "../styles/devicelist.css";
 import { useNavigate } from "react-router-dom";
 
-function DeviceList({ devices }) {
+function DeviceList({
+
+    devices,
+
+    totalRecords,
+
+    currentPage,
+
+    perPage,
+
+    onEditDevice,
+
+    onToggleDeviceStatus,
+
+    onDeleteDevice
+
+}) {
 
     const navigate = useNavigate();
 
@@ -13,7 +29,37 @@ function DeviceList({ devices }) {
 
                 <h2>Registered Devices</h2>
 
-                <span>{devices.length} Devices</span>
+                <span>
+
+                    Showing {
+
+                        devices.length > 0
+
+                            ? ((currentPage - 1) * perPage) + 1
+
+                            : 0
+
+                    }
+
+                    -
+
+                    {
+
+                        Math.min(
+
+                            currentPage * perPage,
+
+                            totalRecords
+
+                        )
+
+                    }
+
+                    {" "}of{" "}
+
+                    {totalRecords} Devices
+
+                </span>
 
             </div>
 
@@ -24,10 +70,15 @@ function DeviceList({ devices }) {
                     <tr>
 
                         <th>Hostname</th>
+
                         <th>IP Address</th>
+
                         <th>Operating System</th>
+
                         <th>Status</th>
+
                         <th>Registered</th>
+
                         <th>Actions</th>
 
                     </tr>
@@ -49,13 +100,27 @@ function DeviceList({ devices }) {
                                 <td>{device.operating_system}</td>
 
                                 <td>
+
                                     <span className={`status-badge ${device.status}`}>
+
                                         {device.status}
+
                                     </span>
+
                                 </td>
 
                                 <td>
-                                    {new Date(device.registered_at).toLocaleDateString()}
+
+                                    {
+
+                                        new Date(
+
+                                            device.registered_at
+
+                                        ).toLocaleDateString()
+
+                                    }
+
                                 </td>
 
                                 <td>
@@ -73,6 +138,7 @@ function DeviceList({ devices }) {
                                         <button
                                             className="action-btn edit-btn"
                                             title="Edit Device"
+                                            onClick={() => onEditDevice(device)}
                                         >
                                             ✏️
                                         </button>
@@ -84,13 +150,24 @@ function DeviceList({ devices }) {
                                                     ? "Enable Device"
                                                     : "Disable Device"
                                             }
+                                            onClick={() => onToggleDeviceStatus(device)}
                                         >
-                                            {device.status === "disabled" ? "✅" : "🚫"}
+                                            {
+
+                                                device.status === "disabled"
+
+                                                    ? "✅"
+
+                                                    : "🚫"
+
+                                            }
+
                                         </button>
 
                                         <button
                                             className="action-btn delete-btn"
                                             title="Delete Device"
+                                            onClick={() => onDeleteDevice(device)}
                                         >
                                             🗑
                                         </button>
@@ -107,7 +184,13 @@ function DeviceList({ devices }) {
 
                         <tr>
 
-                            <td colSpan="6" style={{ textAlign: "center", padding: "30px" }}>
+                            <td
+                                colSpan="6"
+                                style={{
+                                    textAlign: "center",
+                                    padding: "30px"
+                                }}
+                            >
 
                                 No devices found.
 

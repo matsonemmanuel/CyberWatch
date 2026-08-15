@@ -28,7 +28,6 @@ function DeviceDetails() {
             setDevice(response.device);
 
         }
-
     }
 
     fetchDevice();

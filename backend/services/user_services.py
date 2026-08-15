@@ -1,6 +1,4 @@
 
-from multiprocessing.dummy import connection
-
 from database.db import get_db_connection
 
 from utils.logger import log_activity

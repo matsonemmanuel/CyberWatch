@@ -10,10 +10,26 @@ function AddDeviceModal({
     onClose,
     onDeviceAdded
 }) {
-
+  
+  
   const [hostname, setHostname] = useState("");
 
+  
+  const [ipAddress, setIpAddress] = useState("");
+
+  const [operatingSystem, setOperatingSystem] = useState("");
+
+  const [status, setStatus] = useState("active");
+
+  const [isSaving, setIsSaving] = useState(false);
+
+  const [errorMessage, setErrorMessage] = useState("");
+
   async function handleAddDevice() {
+
+    setErrorMessage("");
+
+    setIsSaving(true);
 
     try {
 
@@ -43,6 +59,11 @@ function AddDeviceModal({
             onDeviceAdded();
 
         }
+        else {
+
+            setErrorMessage(result.message);
+
+        }
 
         console.log(result);
 
@@ -50,17 +71,20 @@ function AddDeviceModal({
 
     catch (error) {
 
-        console.error(error);
+    console.error(error);
+
+    setErrorMessage("Unable to register device.");
+
+    }
+
+    finally {
+
+    setIsSaving(false);
 
     }
 
 }
-
-  const [ipAddress, setIpAddress] = useState("");
-
-  const [operatingSystem, setOperatingSystem] = useState("");
-
-  const [status, setStatus] = useState("active");
+  
 
     return (
 
@@ -141,6 +165,16 @@ function AddDeviceModal({
 
                 </div>
 
+                {errorMessage && (
+
+                    <div className="form-error">
+
+                        {errorMessage}
+
+                    </div>
+
+                )}
+
                 <div className="modal-footer">
 
                     <button
@@ -153,9 +187,10 @@ function AddDeviceModal({
                     <button
                         className="save-btn"
                         onClick={handleAddDevice}
+                        disabled={isSaving}
                     >
 
-                        Add Device
+                        {isSaving ? "Saving..." : "Add Device"}
 
                     </button>
 

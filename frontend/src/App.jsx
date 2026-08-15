@@ -5,6 +5,7 @@ import Dashboard from "./pages/Dashboard"
 import Devices from "./pages/Devices";
 import DeviceDetails from "./pages/DeviceDetails";
 import ProtectedRoute from "./components/ProtectedRoute";
+import SecurityLogs from "./pages/SecurityLogs";
 
 function App() {
   return (
@@ -42,6 +43,15 @@ function App() {
             element={
                 <ProtectedRoute>
                     <DeviceDetails />
+                </ProtectedRoute>
+            }
+        />
+
+        <Route
+            path="/logs"
+            element={
+                <ProtectedRoute>
+                    <SecurityLogs />
                 </ProtectedRoute>
             }
         />

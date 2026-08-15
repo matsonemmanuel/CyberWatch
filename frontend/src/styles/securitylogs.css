@@ -1,0 +1,565 @@
+/* =========================================================
+   SECURITY LOGS MAIN CONTENT
+   ========================================================= */
+
+.security-logs-content {
+    width: 100%;
+    min-height: 100vh;
+    padding: 20px 30px 30px;
+    box-sizing: border-box;
+
+    background: #0f172a;
+
+    overflow-x: hidden;
+}
+
+
+/* =========================================================
+   LOG TOOLBAR
+   ========================================================= */
+
+.security-logs-content .log-toolbar {
+    width: 100%;
+    margin: 0 auto 20px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+
+    padding: 12px 15px;
+
+    box-sizing: border-box;
+
+    background: #111c33;
+
+    border: 1px solid #263653;
+    border-radius: 8px;
+
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+
+/* Search input */
+
+.security-logs-content .log-toolbar input {
+    height: 38px;
+
+    width: 260px;
+
+    padding: 0 12px;
+
+    box-sizing: border-box;
+
+    background: #18243a;
+    color: #ffffff;
+
+    border: 1px solid #33445f;
+    border-radius: 6px;
+
+    outline: none;
+
+    font-size: 14px;
+}
+
+
+.security-logs-content .log-toolbar input::placeholder {
+    color: #94a3b8;
+}
+
+
+.security-logs-content .log-toolbar input:focus {
+    border-color: #22b8d6;
+
+    box-shadow: 0 0 0 2px rgba(34, 184, 214, 0.15);
+}
+
+
+/* Select boxes */
+
+.security-logs-content .log-toolbar select {
+    height: 38px;
+
+    padding: 0 12px;
+
+    box-sizing: border-box;
+
+    background: #18243a;
+    color: #ffffff;
+
+    border: 1px solid #33445f;
+    border-radius: 6px;
+
+    outline: none;
+
+    font-size: 14px;
+
+    cursor: pointer;
+}
+
+
+.security-logs-content .log-toolbar select:focus {
+    border-color: #22b8d6;
+
+    box-shadow: 0 0 0 2px rgba(34, 184, 214, 0.15);
+}
+
+
+/* Reset button */
+
+.security-logs-content .log-toolbar button {
+    height: 38px;
+
+    padding: 0 16px;
+
+    border: none;
+    border-radius: 6px;
+
+    background: #2563eb;
+    color: #ffffff;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+.security-logs-content .log-toolbar button:hover {
+    background: #1d4ed8;
+
+    transform: translateY(-1px);
+}
+
+
+.security-logs-content .log-toolbar button:active {
+    transform: translateY(0);
+}
+
+
+/* =========================================================
+   LOG LIST
+   ========================================================= */
+
+.security-logs-content .log-list {
+    width: 100%;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   LOG LIST CARD
+   ========================================================= */
+
+.log-list-card {
+    width: 100%;
+
+    box-sizing: border-box;
+
+    background: #0f172a;
+
+    border: 1px solid #1e2b42;
+    border-radius: 8px;
+
+    overflow-x: auto;
+
+    scrollbar-width: thin;
+}
+
+
+/* =========================================================
+   LOG HEADER
+   ========================================================= */
+
+.log-header {
+    width: 100%;
+
+    padding: 5px 0 18px;
+
+    box-sizing: border-box;
+
+    text-align: center;
+}
+
+
+.log-header h2 {
+    margin: 0 0 8px;
+
+    color: #f8fafc;
+
+    font-size: 28px;
+    font-weight: 700;
+}
+
+
+.log-header span {
+    color: #cbd5e1;
+
+    font-size: 18px;
+}
+
+
+/* =========================================================
+   LOG TABLE
+   ========================================================= */
+
+.log-table {
+    width: 100%;
+
+    min-width: 1050px;
+
+    border-collapse: collapse;
+
+    table-layout: auto;
+
+    color: #f8fafc;
+}
+
+
+/* Table header */
+
+.log-table th {
+    padding: 12px 10px;
+
+    background: #111c33;
+
+    color: #f8fafc;
+
+    font-size: 15px;
+    font-weight: 700;
+
+    text-align: center;
+
+    border-bottom: 1px solid #263653;
+}
+
+
+/* Table cells */
+
+.log-table td {
+    padding: 10px 10px;
+
+    color: #e2e8f0;
+
+    font-size: 15px;
+
+    text-align: center;
+
+    border-bottom: 1px solid #1e293b;
+
+    white-space: nowrap;
+}
+
+
+/* Row hover */
+
+.log-table tbody tr {
+    transition: background 0.2s ease;
+}
+
+
+.log-table tbody tr:hover {
+    background: #162238;
+}
+
+
+/* =========================================================
+   EVENT COLUMN
+   ========================================================= */
+
+.log-table th:nth-child(2),
+.log-table td:nth-child(2) {
+    white-space: normal;
+
+    min-width: 220px;
+    max-width: 350px;
+
+    line-height: 1.4;
+}
+
+
+/* =========================================================
+   DEVICE COLUMN
+   ========================================================= */
+
+.log-table th:nth-child(5),
+.log-table td:nth-child(5) {
+    min-width: 150px;
+}
+
+
+/* =========================================================
+   TIMESTAMP COLUMN
+   ========================================================= */
+
+.log-table th:nth-child(6),
+.log-table td:nth-child(6) {
+    min-width: 210px;
+}
+
+
+/* =========================================================
+   ACTIONS COLUMN
+   ========================================================= */
+
+.log-table th:nth-child(7),
+.log-table td:nth-child(7) {
+    min-width: 190px;
+}
+
+
+/* =========================================================
+   SEVERITY BADGES
+   ========================================================= */
+
+.severity-badge {
+    display: inline-block;
+
+    padding: 3px 7px;
+
+    border-radius: 3px;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    text-transform: lowercase;
+}
+
+
+.severity-badge.low {
+    color: #4ade80;
+
+    background: rgba(34, 197, 94, 0.15);
+}
+
+
+.severity-badge.medium {
+    color: #facc15;
+
+    background: rgba(234, 179, 8, 0.18);
+}
+
+
+.severity-badge.high {
+    color: #ff6b6b;
+
+    background: rgba(239, 68, 68, 0.18);
+}
+
+
+/* =========================================================
+   LOG STATUS
+   ========================================================= */
+
+.log-status {
+    font-weight: 600;
+}
+
+
+.log-status.open {
+    color: #f8fafc;
+}
+
+
+.log-status.resolved {
+    color: #4ade80;
+}
+
+
+.log-status.investigating {
+    color: #facc15;
+}
+
+
+/* =========================================================
+   ACTION BUTTONS
+   ========================================================= */
+
+.action-buttons {
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    gap: 8px;
+}
+
+
+.action-btn {
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    border: none;
+
+    border-radius: 8px;
+
+    font-size: 17px;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        opacity 0.2s ease;
+}
+
+
+.action-btn:hover {
+    transform: translateY(-2px);
+
+    opacity: 0.9;
+}
+
+
+.action-btn:active {
+    transform: translateY(0);
+}
+
+
+/* View */
+
+.view-btn {
+    background: #0ea5e9;
+}
+
+
+/* Edit */
+
+.edit-btn {
+    background: #f59e0b;
+}
+
+
+/* Status */
+
+.disable-btn {
+    background: #64748b;
+}
+
+
+/* Archive */
+
+.delete-btn {
+    background: #dc2626;
+}
+
+
+/* =========================================================
+   PAGINATION
+   ========================================================= */
+
+.security-logs-content .pagination {
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    gap: 12px;
+
+    margin-top: 20px;
+
+    padding-bottom: 10px;
+}
+
+
+.security-logs-content .pagination button {
+    padding: 8px 15px;
+
+    border: 1px solid #334155;
+
+    border-radius: 6px;
+
+    background: #1e293b;
+
+    color: #f8fafc;
+
+    font-size: 14px;
+
+    cursor: pointer;
+
+    transition: background 0.2s ease;
+}
+
+
+.security-logs-content .pagination button:hover:not(:disabled) {
+    background: #334155;
+}
+
+
+.security-logs-content .pagination button:disabled {
+    opacity: 0.45;
+
+    cursor: not-allowed;
+}
+
+
+.security-logs-content .pagination span {
+    color: #cbd5e1;
+
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   RESPONSIVE TOOLBAR
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .security-logs-content .log-toolbar {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+
+    .security-logs-content .log-toolbar input {
+        width: 220px;
+    }
+
+}
+
+
+/* =========================================================
+   SMALL SCREENS
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .security-logs-content {
+        padding: 15px;
+    }
+
+
+    .security-logs-content .log-toolbar {
+        flex-direction: column;
+
+        align-items: stretch;
+    }
+
+
+    .security-logs-content .log-toolbar input,
+    .security-logs-content .log-toolbar select,
+    .security-logs-content .log-toolbar button {
+        width: 100%;
+    }
+
+
+    .log-header h2 {
+        font-size: 23px;
+    }
+
+
+    .log-header span {
+        font-size: 16px;
+    }
+
+}

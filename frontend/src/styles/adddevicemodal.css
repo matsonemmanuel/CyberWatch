@@ -151,3 +151,15 @@
     cursor:pointer;
 
 }
+
+.form-error {
+
+    color: #d32f2f;
+
+    margin: 12px 0;
+
+    font-size: 14px;
+
+    text-align: center;
+
+}
