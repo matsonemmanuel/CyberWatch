@@ -1,46 +1,80 @@
+/* =========================================================
+   DEVICE LIST CARD
+   ========================================================= */
+
 .device-list-card {
 
-    margin-top: 30px;
+    width: 100%;
 
-    background: #1E293B;
-
-    border-radius: 16px;
-
-    padding: 25px;
-
-    border: 1px solid rgba(255,255,255,0.05);
-
-    box-shadow: 0 8px 20px rgba(0,0,0,.25);
-
-}
-
-.device-header {
+    min-width: 0;
 
     display: flex;
 
-    justify-content: space-between;
+    flex-direction: column;
+
+    box-sizing: border-box;
+
+    background: #1e293b;
+
+    border-radius: 16px;
+
+    border: 1px solid rgba(255, 255, 255, 0.05);
+
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   REGISTERED DEVICES HEADER
+   ========================================================= */
+
+.device-header {
+
+    width: 100%;
+
+    min-height: 92px;
+
+    flex-shrink: 0;
+
+    display: flex;
 
     align-items: center;
 
-    margin-bottom: 20px;
+    justify-content: space-between;
 
+    padding: 20px 28px;
+
+    box-sizing: border-box;
+
+    background: #1e293b;
+
+    border-bottom: 1px solid #334155;
 }
+
 
 .device-header h2 {
 
-    color: #F8FAFC;
+    margin: 0;
+
+    color: #f8fafc;
 
     font-size: 28px;
 
+    font-weight: 700;
 }
+
 
 .device-header span {
 
-    background: #0EA5E9;
+    flex-shrink: 0;
+
+    background: #0ea5e9;
 
     color: white;
 
-    padding: 8px 16px;
+    padding: 10px 18px;
 
     border-radius: 30px;
 
@@ -48,115 +82,287 @@
 
     font-weight: 600;
 
+    white-space: nowrap;
 }
+
+
+/* =========================================================
+   TABLE SCROLL AREA
+   THIS IS THE ONLY SCROLLING AREA
+   ========================================================= */
+
+.device-table-scroll {
+
+    width: 100%;
+
+    max-height: 520px;
+
+    overflow-y: auto;
+
+    overflow-x: auto;
+
+    box-sizing: border-box;
+
+    scrollbar-width: thin;
+
+    scrollbar-color: #475569 #172338;
+}
+
+
+/* =========================================================
+   TABLE SCROLLBAR
+   ========================================================= */
+
+.device-table-scroll::-webkit-scrollbar {
+
+    width: 8px;
+
+    height: 8px;
+}
+
+
+.device-table-scroll::-webkit-scrollbar-track {
+
+    background: #172338;
+}
+
+
+.device-table-scroll::-webkit-scrollbar-thumb {
+
+    background: #475569;
+
+    border-radius: 10px;
+}
+
+
+.device-table-scroll::-webkit-scrollbar-thumb:hover {
+
+    background: #64748b;
+}
+
+
+/* =========================================================
+   TABLE CONTAINER
+   NO SCROLLING HERE
+   ========================================================= */
+
+.device-table-container {
+
+    width: 100%;
+
+    min-width: 1100px;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   TABLE
+   ========================================================= */
 
 .device-table {
 
     width: 100%;
 
-    border-collapse: collapse;
+    min-width: 1100px;
 
+    border-collapse: separate;
+
+    border-spacing: 0;
+
+    table-layout: fixed;
 }
+
+
+/* =========================================================
+   TABLE HEADER
+   ========================================================= */
+
+.device-table thead {
+
+    position: static;
+}
+
+
+/* =========================================================
+   STICKY TABLE HEADERS
+   ========================================================= */
 
 .device-table th {
 
+    position: sticky;
+
+    top: 0;
+
+    z-index: 20;
+
+    height: 72px;
+
+    padding: 16px 22px;
+
     text-align: left;
 
-    padding: 16px;
+    color: #f8fafc;
 
-    color: #94A3B8;
-
-    font-size: 15px;
+    background: #172338;
 
     border-bottom: 1px solid #334155;
 
+    white-space: nowrap;
+
+    font-size: 15px;
+
+    font-weight: 700;
+
+    box-sizing: border-box;
 }
+
+
+/* =========================================================
+   COLUMN WIDTHS
+   ========================================================= */
+
+.device-table th:nth-child(1),
+.device-table td:nth-child(1) {
+
+    width: 18%;
+}
+
+
+.device-table th:nth-child(2),
+.device-table td:nth-child(2) {
+
+    width: 15%;
+}
+
+
+.device-table th:nth-child(3),
+.device-table td:nth-child(3) {
+
+    width: 21%;
+}
+
+
+.device-table th:nth-child(4),
+.device-table td:nth-child(4) {
+
+    width: 12%;
+}
+
+
+.device-table th:nth-child(5),
+.device-table td:nth-child(5) {
+
+    width: 16%;
+
+    min-width: 150px;
+}
+
+
+.device-table th:nth-child(6),
+.device-table td:nth-child(6) {
+
+    width: 18%;
+
+    min-width: 190px;
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   TABLE BODY CELLS
+   ========================================================= */
 
 .device-table td {
 
-    padding: 18px 16px;
+    height: 72px;
 
-    color: #F8FAFC;
+    padding: 16px 22px;
 
-    border-bottom: 1px solid #2D3748;
+    color: #f8fafc;
 
+    background: #1e293b;
+
+    border-bottom: 1px solid #2d3748;
+
+    white-space: nowrap;
+
+    font-size: 16px;
+
+    vertical-align: middle;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    box-sizing: border-box;
 }
 
-.device-table tbody tr {
 
-    transition: .3s;
+/* =========================================================
+   ROW HOVER
+   ========================================================= */
 
-}
-
-.device-table tbody tr:hover {
+.device-table tbody tr:hover td {
 
     background: #273449;
-
 }
+
+
+/* =========================================================
+   STATUS BADGE
+   ========================================================= */
 
 .status-badge {
 
-    padding: 6px 14px;
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 7px 15px;
 
     border-radius: 30px;
 
     font-size: 13px;
 
-    font-weight: bold;
+    font-weight: 700;
 
     text-transform: capitalize;
 
+    white-space: nowrap;
 }
+
 
 .status-badge.active {
 
-    background: rgba(34,197,94,.2);
+    background: rgba(34, 197, 94, 0.2);
 
-    color: #22C55E;
-
+    color: #22c55e;
 }
+
 
 .status-badge.offline {
 
-    background: rgba(239,68,68,.2);
+    background: rgba(239, 68, 68, 0.2);
 
-    color: #EF4444;
-
+    color: #ef4444;
 }
+
 
 .status-badge.disabled {
 
-    background: rgba(245,158,11,.2);
+    background: rgba(245, 158, 11, 0.2);
 
-    color: #F59E0B;
-
+    color: #f59e0b;
 }
 
-.view-btn{
 
-    padding:8px 18px;
-
-    border:none;
-
-    border-radius:8px;
-
-    background:#06B6D4;
-
-    color:white;
-
-    font-weight:600;
-
-    cursor:pointer;
-
-    transition:.3s;
-
-}
-
-.view-btn:hover{
-
-    background:#0891B2;
-
-}
+/* =========================================================
+   ACTIONS
+   ========================================================= */
 
 .action-buttons {
 
@@ -168,13 +374,19 @@
 
     gap: 8px;
 
+    width: 100%;
+
+    white-space: nowrap;
 }
+
 
 .action-btn {
 
     width: 36px;
 
     height: 36px;
+
+    flex-shrink: 0;
 
     border: none;
 
@@ -184,60 +396,49 @@
 
     font-size: 16px;
 
-    transition: .25s;
-
     display: flex;
 
     align-items: center;
 
     justify-content: center;
-
 }
+
 
 .view-btn {
 
-    background: #0EA5E9;
-
+    background: #0ea5e9;
 }
 
-.view-btn:hover {
-
-    background: #0284C7;
-
-}
 
 .edit-btn {
 
-    background: #F59E0B;
-
+    background: #f59e0b;
 }
 
-.edit-btn:hover {
-
-    background: #D97706;
-
-}
 
 .disable-btn {
 
-    background: #64748B;
-
+    background: #64748b;
 }
 
-.disable-btn:hover {
-
-    background: #475569;
-
-}
 
 .delete-btn {
 
-    background: #DC2626;
-
+    background: #dc2626;
 }
 
-.delete-btn:hover {
 
-    background: #B91C1C;
+/* =========================================================
+   NO DEVICES
+   ========================================================= */
 
+.no-devices {
+
+    text-align: center !important;
+
+    padding: 40px !important;
+
+    color: #94a3b8 !important;
+
+    font-size: 16px;
 }

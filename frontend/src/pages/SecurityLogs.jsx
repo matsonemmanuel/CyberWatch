@@ -3,13 +3,10 @@ import { useEffect, useState } from "react";
 import { getLogs } from "../services/logsService";
 
 import LogList from "../components/LogList";
-
 import LogToolbar from "../components/LogToolbar";
 
-import Sidebar from "../components/Sidebar";
-import Topbar from "../components/Topbar";
-
 import "../styles/securitylogs.css";
+
 
 function SecurityLogs() {
 
@@ -31,6 +28,7 @@ function SecurityLogs() {
 
     const [totalPages, setTotalPages] = useState(0);
 
+
     function handleReset() {
 
         setSearchTerm("");
@@ -41,61 +39,64 @@ function SecurityLogs() {
 
     }
 
+
     useEffect(() => {
 
-      const timer = setTimeout(() => {
+        const timer = setTimeout(() => {
 
-          async function loadLogs() {
+            async function loadLogs() {
 
-              const data = await getLogs(
-                  searchTerm,
-                  severityFilter,
-                  statusFilter,
-                  archivedFilter,
-                  currentPage,
-                  limit
-              );
+                try {
 
-              console.log("Security Logs:", data);
+                    const data = await getLogs(
+                        searchTerm,
+                        severityFilter,
+                        statusFilter,
+                        archivedFilter,
+                        currentPage,
+                        limit
+                    );
 
-              if (data.status === "success") {
+                    console.log("Security Logs:", data);
 
-                  setLogs(data.logs);
+                    if (data.status === "success") {
 
-                      setTotalLogs(data.total_logs);
+                        setLogs(data.logs);
 
-                      setTotalPages(data.total_pages);
+                        setTotalLogs(data.total_logs);
 
-              }
+                        setTotalPages(data.total_pages);
 
-          }
+                    }
 
-          loadLogs();
+                } catch (error) {
 
-      }, 500);
+                    console.error("Failed to load logs:", error);
 
-      return () => clearTimeout(timer);
+                }
 
-  }, [
-      searchTerm,
-      severityFilter,
-      statusFilter,
-      archivedFilter,
-      currentPage,
-      limit
-  ]);
+            }
+
+            loadLogs();
+
+        }, 500);
+
+
+        return () => clearTimeout(timer);
+
+    }, [
+        searchTerm,
+        severityFilter,
+        statusFilter,
+        archivedFilter,
+        currentPage,
+        limit
+    ]);
+
 
     return (
 
-      <div className="dashboard-container">
-
-    <Sidebar />
-
-    <div className="dashboard-content">
-
-        <Topbar />
-
-        <div className="security-logs-content">
+        <div className="security-logs-page">
 
             <LogToolbar
                 searchTerm={searchTerm}
@@ -113,7 +114,12 @@ function SecurityLogs() {
                 onReset={handleReset}
             />
 
-            <LogList logs={logs} />
+
+            <LogList
+                logs={logs}
+                totalLogs={totalLogs}
+            />
+
 
             <div className="pagination">
 
@@ -124,9 +130,11 @@ function SecurityLogs() {
                     Previous
                 </button>
 
+
                 <span>
                     Page {currentPage} of {totalPages}
                 </span>
+
 
                 <button
                     onClick={() => setCurrentPage(currentPage + 1)}
@@ -139,12 +147,9 @@ function SecurityLogs() {
 
         </div>
 
-    </div>
-
-</div>
-
-  );
+    );
 
 }
+
 
 export default SecurityLogs;

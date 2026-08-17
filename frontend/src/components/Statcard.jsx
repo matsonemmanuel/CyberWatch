@@ -3,27 +3,26 @@ import "../styles/statcard.css";
 function StatCard({ icon, title, value }) {
 
     return (
-
         <div className="stat-card">
 
             <div className="stat-icon">
-
                 {icon}
-
             </div>
 
-            <div className="stat-info">
+            <div className="stat-content">
 
-                <h3>{title}</h3>
+                <p className="stat-title">
+                    {title}
+                </p>
 
-                <h2>{value}</h2>
+                <p className="stat-value">
+                    {value}
+                </p>
 
             </div>
 
         </div>
-
     );
-
 }
 
 export default StatCard;

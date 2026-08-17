@@ -1,113 +1,278 @@
+/* =========================================================
+   CYBERWATCH SIDEBAR
+   ========================================================= */
+
+
+/* =========================================================
+   SIDEBAR VARIABLES
+   ========================================================= */
+
+:root {
+    --sidebar-width: 215px;
+    --topbar-height: 86px;
+
+    --sidebar-bg: #1e293b;
+    --sidebar-border: #334155;
+
+    --sidebar-text: #f8fafc;
+    --sidebar-muted: #94a3b8;
+
+    --sidebar-active: #06b6d4;
+    --sidebar-hover: #334155;
+}
+
+
+/* =========================================================
+   SIDEBAR
+   ========================================================= */
+
 .sidebar {
+    position: fixed;
 
-    width: 280px;
-    min-height: 100vh;
+    top: 0;
+    left: 0;
+    bottom: 0;
 
-    background: #1E293B;
+    width: var(--sidebar-width);
+    height: 100vh;
 
-    color: #F8FAFC;
+    box-sizing: border-box;
 
     display: flex;
     flex-direction: column;
 
-    border-right: 1px solid #334155;
+    background: var(--sidebar-bg);
+    color: var(--sidebar-text);
 
+    border-right: 1px solid var(--sidebar-border);
+
+    z-index: 1000;
+
+    overflow-x: hidden;
+    overflow-y: auto;
 }
+
+
+/* =========================================================
+   SIDEBAR HEADER / LOGO AREA
+   ========================================================= */
 
 .sidebar-header {
+    width: 100%;
+    height: var(--topbar-height);
+    min-height: var(--topbar-height);
+
     display: flex;
-    justify-content: center;
     align-items: center;
-    padding: 25px 15px;
-    border-bottom: 1px solid #334155;
+    justify-content: center;
+
+    padding: 10px 16px;
+
+    box-sizing: border-box;
+
+    border-bottom: 1px solid var(--sidebar-border);
 }
+
 
 .sidebar-logo {
-    width: 170px;
+    display: block;
+
+    width: 145px;
+    max-width: 100%;
     height: auto;
-    transition: transform 0.3s ease;
+
+    object-fit: contain;
+
+    transition: transform 0.2s ease;
 }
+
 
 .sidebar-logo:hover {
-    transform: scale(1.03);
+    transform: scale(1.02);
 }
 
-.sidebar-header h2 {
 
-    margin: 0;
-
-    color: #06B6D4;
-
-    font-size: 1.8rem;
-
-}
-
-.sidebar-header p {
-
-    margin-top: 8px;
-
-    color: #CBD5E1;
-
-    font-size: 0.9rem;
-
-}
+/* =========================================================
+   SIDEBAR MENU
+   ========================================================= */
 
 .sidebar-menu {
-
-    padding-top: 20px;
+    width: 100%;
 
     flex: 1;
 
+    padding: 22px 0;
+
+    box-sizing: border-box;
 }
 
+
 .sidebar-menu ul {
+    width: 100%;
 
     list-style: none;
 
     padding: 0;
-
     margin: 0;
 
+    box-sizing: border-box;
 }
+
+
+/* =========================================================
+   MENU ITEM
+   ========================================================= */
 
 .sidebar-menu li {
+    width: 100%;
 
-    margin: 4px 12px;
+    padding: 0 14px;
+    margin: 0 0 6px 0;
 
+    box-sizing: border-box;
 }
 
+
+/* =========================================================
+   MENU LINK
+   ========================================================= */
+
 .sidebar-menu a {
+    width: 100%;
+    min-height: 48px;
 
-    display: block;
+    display: flex;
+    align-items: center;
 
-    padding: 15px 20px;
+    gap: 12px;
 
-    color: #F8FAFC;
+    padding: 12px 16px;
 
-    text-decoration: none;
+    box-sizing: border-box;
 
     border-radius: 10px;
 
-    transition: all 0.3s ease;
+    color: var(--sidebar-text);
 
-    font-size: 1rem;
+    text-decoration: none;
 
+    font-size: 16px;
+    font-weight: 500;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
 }
+
+
+/* =========================================================
+   ICON
+   ========================================================= */
+
+.sidebar-menu a::first-letter {
+    font-size: 18px;
+}
+
+
+/* =========================================================
+   HOVER
+   ========================================================= */
 
 .sidebar-menu a:hover {
+    background: var(--sidebar-hover);
 
-    background: #334155;
-
-    color: #06B6D4;
-
+    color: var(--sidebar-text);
 }
 
+
+/* =========================================================
+   ACTIVE LINK
+   ========================================================= */
+
 .sidebar-menu a.active {
+    background: var(--sidebar-active);
 
-    background: #06B6D4;
-
-    color: white;
+    color: #ffffff;
 
     font-weight: 600;
+}
 
+
+/* =========================================================
+   SCROLLBAR
+   ========================================================= */
+
+.sidebar::-webkit-scrollbar {
+    width: 5px;
+}
+
+
+.sidebar::-webkit-scrollbar-track {
+    background: var(--sidebar-bg);
+}
+
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: #475569;
+
+    border-radius: 10px;
+}
+
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background: #64748b;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    :root {
+        --sidebar-width: 200px;
+    }
+
+    .sidebar-logo {
+        width: 135px;
+    }
+
+    .sidebar-menu a {
+        font-size: 15px;
+
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+}
+
+
+@media (max-width: 650px) {
+
+    :root {
+        --sidebar-width: 190px;
+    }
+
+    .sidebar-logo {
+        width: 125px;
+    }
+
+    .sidebar-menu {
+        padding-top: 16px;
+    }
+
+    .sidebar-menu li {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .sidebar-menu a {
+        min-height: 44px;
+
+        padding: 10px 12px;
+
+        gap: 10px;
+
+        font-size: 14px;
+    }
 }

@@ -2,21 +2,16 @@ import cyberwatchLogo from "../assets/cyberwatchlogo-rm.png";
 import { NavLink } from "react-router-dom";
 import "../styles/sidebar.css";
 
-
 function Sidebar() {
-
     return (
-
-        <div className="sidebar">
+        <aside className="sidebar">
 
             <div className="sidebar-header">
-
                 <img
                     src={cyberwatchLogo}
                     alt="CyberWatch Logo"
                     className="sidebar-logo"
                 />
-
             </div>
 
             <nav className="sidebar-menu">
@@ -24,54 +19,60 @@ function Sidebar() {
                 <ul>
 
                     <li>
-
                         <NavLink to="/dashboard">
-
-                            🏠 Dashboard
-
+                            <span>🏠</span>
+                            <span>Dashboard</span>
                         </NavLink>
-
                     </li>
 
                     <li>
-
                         <NavLink to="/devices">
-
-                            🖥 Devices
-
+                            <span>🖥</span>
+                            <span>Devices</span>
                         </NavLink>
-
                     </li>
 
-                    
-                    <NavLink to="/logs">
-                        📋 Security Logs
-                    </NavLink>
+                    <li>
+                        <NavLink to="/logs">
+                            <span>📋</span>
+                            <span>Security Logs</span>
+                        </NavLink>
+                    </li>
 
-                    <NavLink to="/alerts">
-                        🚨 Alerts
-                    </NavLink>
+                    <li>
+                        <NavLink to="/alerts">
+                            <span>🚨</span>
+                            <span>Alerts</span>
+                        </NavLink>
+                    </li>
 
-                    <NavLink to="/users">
-                        👥 Users
-                    </NavLink>
+                    <li>
+                        <NavLink to="/users">
+                            <span>👥</span>
+                            <span>Users</span>
+                        </NavLink>
+                    </li>
 
-                    <NavLink to="/audit">
-                        📝 Audit Trail
-                    </NavLink>
+                    <li>
+                        <NavLink to="/audit">
+                            <span>📝</span>
+                            <span>Audit Trail</span>
+                        </NavLink>
+                    </li>
 
-                    <NavLink to="/settings">
-                        ⚙ Settings
-                    </NavLink>
+                    <li>
+                        <NavLink to="/settings">
+                            <span>⚙</span>
+                            <span>Settings</span>
+                        </NavLink>
+                    </li>
 
                 </ul>
 
             </nav>
 
-        </div>
-
+        </aside>
     );
-
 }
 
 export default Sidebar;

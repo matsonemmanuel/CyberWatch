@@ -1,0 +1,73 @@
+/* =========================================================
+   DEVICES PAGE
+   ========================================================= */
+
+.devices-page {
+
+    width: 100%;
+
+    min-width: 0;
+
+    margin: 0;
+
+    padding: 0;
+
+    box-sizing: border-box;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 20px;
+
+    overflow: visible;
+}
+
+
+/* =========================================================
+   DEVICE TOOLBAR
+   ========================================================= */
+
+.devices-page .device-toolbar {
+
+    position: static;
+
+    width: 100%;
+
+    min-width: 0;
+
+    flex-shrink: 0;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   DEVICE LIST
+   ========================================================= */
+
+.devices-page .device-list-card {
+
+    width: 100%;
+
+    min-width: 0;
+
+    margin: 0;
+
+    flex-shrink: 0;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 800px) {
+
+    .devices-page {
+
+        gap: 14px;
+
+    }
+
+}

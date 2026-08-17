@@ -182,3 +182,37 @@
     border-right-color: var(--border);
   }
 }
+
+/* =========================================================
+   GLOBAL LAYOUT RESET
+   ========================================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+
+html,
+body,
+#root {
+
+    margin: 0;
+
+    padding: 0;
+
+    width: 100%;
+
+    min-height: 100%;
+
+}
+
+
+body {
+
+    background: #0B1220;
+
+    color: #F8FAFC;
+
+    overflow-x: hidden;
+
+}

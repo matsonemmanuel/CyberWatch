@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 
-import Sidebar from "../components/Sidebar";
-import Topbar from "../components/Topbar";
 import DeviceToolbar from "../components/DeviceToolbar";
 import DeviceList from "../components/DeviceList";
 import AddDeviceModal from "../components/AddDeviceModal";
@@ -9,6 +7,9 @@ import EditDeviceModal from "../components/EditDeviceModal";
 import ConfirmationModal from "../components/ConfirmationModal";
 
 import { getDevices } from "../services/deviceService";
+
+import "../styles/devices.css";
+
 
 function Devices() {
 
@@ -25,7 +26,6 @@ function Devices() {
     const [statusFilter, setStatusFilter] = useState("All");
 
     const [showAddModal, setShowAddModal] = useState(false);
-    
 
     const [showEditModal, setShowEditModal] = useState(false);
 
@@ -35,11 +35,13 @@ function Devices() {
 
     const [confirmationAction, setConfirmationAction] = useState("");
 
+
     useEffect(() => {
 
         loadDevices();
 
     }, []);
+
 
     async function loadDevices() {
 
@@ -65,9 +67,7 @@ function Devices() {
 
             }
 
-        }
-
-        catch (error) {
+        } catch (error) {
 
             console.error(error);
 
@@ -77,9 +77,8 @@ function Devices() {
 
     }
 
-    function handleEditDevice(device) {
 
-        console.log("Selected Device:", device);
+    function handleEditDevice(device) {
 
         setSelectedDevice(device);
 
@@ -87,9 +86,8 @@ function Devices() {
 
     }
 
-    function handleToggleDeviceStatus(device) {
 
-        console.log("Selected Device:", device);
+    function handleToggleDeviceStatus(device) {
 
         setSelectedDevice(device);
 
@@ -99,9 +97,8 @@ function Devices() {
 
     }
 
-    function handleDeleteDevice(device) {
 
-        console.log("Delete Device:", device);
+    function handleDeleteDevice(device) {
 
         setSelectedDevice(device);
 
@@ -110,99 +107,99 @@ function Devices() {
         setShowStatusModal(true);
 
     }
-    /*
-        Temporary frontend filtering.
 
-        This will be removed later when
-        backend search and pagination are implemented.
-    */
 
     const filteredDevices = devices.filter((device) => {
 
         const search = searchTerm.toLowerCase();
 
         const matchesSearch =
-
             device.hostname.toLowerCase().includes(search) ||
-
             device.ip_address.toLowerCase().includes(search);
 
         const matchesStatus =
-
             statusFilter === "All" ||
-
             device.status === statusFilter;
 
         return matchesSearch && matchesStatus;
 
     });
 
+
     return (
 
-        <div className="dashboard-container">
+        <div className="devices-page">
 
-            <Sidebar />
+            <div className="devices-page-header">
 
-            <div className="dashboard-content">
+                <div>
 
-                <Topbar />
+                    <h1>Devices</h1>
 
-                <div className="devices-content">
-
-                    <DeviceToolbar
-                        searchTerm={searchTerm}
-                        setSearchTerm={setSearchTerm}
-                        statusFilter={statusFilter}
-                        setStatusFilter={setStatusFilter}
-                        onAddDevice={() => setShowAddModal(true)}
-                    />
-
-                    <DeviceList
-                        devices={filteredDevices}
-                        totalRecords={totalRecords}
-                        currentPage={currentPage}
-                        perPage={perPage}
-                        onEditDevice={handleEditDevice}
-                        onToggleDeviceStatus={handleToggleDeviceStatus}
-                        onDeleteDevice={handleDeleteDevice}
-                    />
-
-                    {showAddModal && (
-
-                        <AddDeviceModal
-                            isOpen={showAddModal}
-                            onClose={() => setShowAddModal(false)}
-                            onDeviceAdded={loadDevices}
-                        />
-
-                    )}
-
-                    <EditDeviceModal
-                        isOpen={showEditModal}
-                        onClose={() => setShowEditModal(false)}
-                        device={selectedDevice}
-                        onDeviceUpdated={loadDevices}
-                    />
-
-                    {showStatusModal && (
-
-                        <ConfirmationModal
-                            device={selectedDevice}
-                            action={confirmationAction}
-                            onClose={() => setShowStatusModal(false)}
-                            onStatusUpdated={loadDevices}
-                        />
-
-                    )}
+                    <p>
+                        Manage and monitor registered devices.
+                    </p>
 
                 </div>
 
             </div>
+
+
+            <DeviceToolbar
+                searchTerm={searchTerm}
+                setSearchTerm={setSearchTerm}
+                statusFilter={statusFilter}
+                setStatusFilter={setStatusFilter}
+                onAddDevice={() => setShowAddModal(true)}
+            />
+
+
+            <DeviceList
+                devices={filteredDevices}
+                totalRecords={totalRecords}
+                currentPage={currentPage}
+                perPage={perPage}
+                onEditDevice={handleEditDevice}
+                onToggleDeviceStatus={handleToggleDeviceStatus}
+                onDeleteDevice={handleDeleteDevice}
+            />
+
+
+            {showAddModal && (
+
+                <AddDeviceModal
+                    isOpen={showAddModal}
+                    onClose={() => setShowAddModal(false)}
+                    onDeviceAdded={loadDevices}
+                />
+
+            )}
+
+
+            <EditDeviceModal
+                isOpen={showEditModal}
+                onClose={() => setShowEditModal(false)}
+                device={selectedDevice}
+                onDeviceUpdated={loadDevices}
+            />
+
+
+            {showStatusModal && (
+
+                <ConfirmationModal
+                    device={selectedDevice}
+                    action={confirmationAction}
+                    onClose={() => setShowStatusModal(false)}
+                    onStatusUpdated={loadDevices}
+                />
+
+            )}
 
         </div>
 
     );
 
 }
+
 
 export default Devices;

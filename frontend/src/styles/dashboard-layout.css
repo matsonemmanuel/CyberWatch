@@ -1,0 +1,248 @@
+/* =========================================================
+   CYBERWATCH - MAIN DASHBOARD LAYOUT
+   ========================================================= */
+
+
+/* =========================================================
+   MAIN APPLICATION LAYOUT
+   ========================================================= */
+
+.dashboard-layout {
+    width: 100%;
+    height: 100vh;
+
+    display: grid;
+
+    grid-template-columns: 214px minmax(0, 1fr);
+    grid-template-rows: 100vh;
+
+    background: #0b1324;
+
+    overflow: hidden;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   SIDEBAR AREA
+   ========================================================= */
+
+.dashboard-sidebar {
+    width: 214px;
+    height: 100vh;
+
+    min-width: 0;
+    min-height: 0;
+
+    overflow: hidden;
+
+    box-sizing: border-box;
+
+    background: #1e2a3d;
+
+    border-right: 1px solid #2b3a50;
+}
+
+
+/* =========================================================
+   MAIN AREA
+   ========================================================= */
+
+.dashboard-main {
+    width: 100%;
+    height: 100vh;
+
+    min-width: 0;
+    min-height: 0;
+
+    display: grid;
+
+    grid-template-rows: 87px minmax(0, 1fr);
+
+    background: #0b1324;
+
+    overflow: hidden;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   TOPBAR AREA
+   ========================================================= */
+
+.dashboard-topbar {
+    width: 100%;
+    height: 87px;
+
+    min-width: 0;
+
+    overflow: hidden;
+
+    box-sizing: border-box;
+
+    background: #101c31;
+
+    border-bottom: 1px solid #2b3a50;
+
+    z-index: 10;
+}
+
+
+/* =========================================================
+   PAGE CONTENT AREA
+   ========================================================= */
+
+.dashboard-page-content {
+    width: 100%;
+    height: 100%;
+
+    min-width: 0;
+    min-height: 0;
+
+    padding: 26px 26px 32px 26px;
+
+    box-sizing: border-box;
+
+    background: #0b1324;
+
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    scrollbar-width: thin;
+    scrollbar-color: #475569 #0b1324;
+}
+
+
+/* =========================================================
+   PAGE CONTENT SCROLLBAR
+   ========================================================= */
+
+.dashboard-page-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.dashboard-page-content::-webkit-scrollbar-track {
+    background: #0b1324;
+}
+
+.dashboard-page-content::-webkit-scrollbar-thumb {
+    background: #475569;
+    border-radius: 10px;
+}
+
+.dashboard-page-content::-webkit-scrollbar-thumb:hover {
+    background: #64748b;
+}
+
+
+/* =========================================================
+   DIRECT PAGE CHILD
+   ========================================================= */
+
+.dashboard-page-content > * {
+    width: 100%;
+    max-width: none;
+
+    margin: 0;
+
+    min-width: 0;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   PREVENT OLD WIDTH / MARGIN RULES
+   ========================================================= */
+
+.dashboard-page-content .dashboard-page,
+.dashboard-page-content .dashboard-container,
+.dashboard-page-content .dashboard-home,
+.dashboard-page-content .devices-page,
+.dashboard-page-content .security-logs-page {
+    width: 100%;
+    max-width: none;
+
+    margin-left: 0;
+    margin-right: 0;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   MEDIUM SCREENS
+   ========================================================= */
+
+@media (max-width: 1200px) {
+
+    .dashboard-layout {
+        grid-template-columns: 210px minmax(0, 1fr);
+    }
+
+    .dashboard-sidebar {
+        width: 210px;
+    }
+
+    .dashboard-page-content {
+        padding: 22px 22px 28px 22px;
+    }
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .dashboard-layout {
+        grid-template-columns: 200px minmax(0, 1fr);
+    }
+
+    .dashboard-sidebar {
+        width: 200px;
+    }
+
+    .dashboard-main {
+        grid-template-rows: 82px minmax(0, 1fr);
+    }
+
+    .dashboard-topbar {
+        height: 82px;
+    }
+
+    .dashboard-page-content {
+        padding: 20px 18px 24px 18px;
+    }
+}
+
+
+/* =========================================================
+   SMALL SCREENS
+   ========================================================= */
+
+@media (max-width: 650px) {
+
+    .dashboard-layout {
+        grid-template-columns: 180px minmax(0, 1fr);
+    }
+
+    .dashboard-sidebar {
+        width: 180px;
+    }
+
+    .dashboard-main {
+        grid-template-rows: 76px minmax(0, 1fr);
+    }
+
+    .dashboard-topbar {
+        height: 76px;
+    }
+
+    .dashboard-page-content {
+        padding: 16px;
+    }
+}

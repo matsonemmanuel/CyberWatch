@@ -1,88 +1,95 @@
-import Sidebar from "../components/Sidebar";
-import Topbar from "../components/Topbar";
 import StatCard from "../components/Statcard";
 import RecentLogs from "../components/RecentLogs";
+
 import { getRecentLogs } from "../services/logsService";
+import { getDashboardStats } from "../services/dashboardService";
 
 import { useState, useEffect } from "react";
 
-import { getDashboardStats } from "../services/dashboardService";
-
 import "../styles/dashboard.css";
+
 
 function Dashboard() {
 
     const [stats, setStats] = useState(null);
     const [logs, setLogs] = useState([]);
 
+
     useEffect(() => {
 
-    async function loadDashboard() {
+        async function loadDashboard() {
 
-    try {
+            try {
 
-        const statsData = await getDashboardStats();
+                const statsData = await getDashboardStats();
 
-        setStats(statsData);
+                setStats(statsData);
 
-        const logsData = await getRecentLogs();
 
-        console.log(logsData);
+                const logsData = await getRecentLogs();
 
-        setLogs(logsData.logs);
+                console.log(logsData);
 
-    } catch (error) {
+                setLogs(logsData.logs || []);
 
-        console.error(error);
+            } catch (error) {
 
-    }
+                console.error("Dashboard loading error:", error);
 
-}
+            }
 
-    loadDashboard();
+        }
 
-}, []);
+
+        loadDashboard();
+
+    }, []);
+
 
     return (
 
-        <div className="dashboard-container">
+        <div className="dashboard-page">
 
-            <Sidebar />
+            {/* ================================
+                SUMMARY STATISTICS
+            ================================= */}
 
-            <div className="dashboard-content">
+            <div className="stats-grid">
 
-                <Topbar />
+                <StatCard
+                    icon="🖥"
+                    title="Devices"
+                    value={stats?.total_devices ?? 0}
+                />
 
-                <div className="stats-grid">
+                <StatCard
+                    icon="🚨"
+                    title="Open Alerts"
+                    value={stats?.open_incidents ?? 0}
+                />
 
-                    <StatCard
-                        icon="🖥"
-                        title="Devices"
-                        value={stats?.total_devices}
-                    />
+                <StatCard
+                    icon="📋"
+                    title="Logs"
+                    value={stats?.total_logs ?? 0}
+                />
 
-                    <StatCard
-                        icon="🚨"
-                        title="Open Alerts"
-                        value={stats?.open_incidents}
-                    />
+                <StatCard
+                    icon="🔥"
+                    title="High Severity"
+                    value={stats?.high_severity_incidents ?? 0}
+                />
 
-                    <StatCard
-                        icon="📋"
-                        title="Logs"
-                        value={stats?.total_logs}
-                    />
+            </div>
 
-                    <StatCard
-                        icon="🔥"
-                        title="High Severity"
-                        value={stats?.high_severity_incidents}
-                    />
 
-                </div>
-   
-    
-              <RecentLogs logs={logs} />
+            {/* ================================
+                RECENT SECURITY EVENTS
+            ================================= */}
+
+            <div className="recent-logs-section">
+
+                <RecentLogs logs={logs} />
 
             </div>
 
@@ -91,5 +98,6 @@ function Dashboard() {
     );
 
 }
+
 
 export default Dashboard;

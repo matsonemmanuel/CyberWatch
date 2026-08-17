@@ -1,65 +1,69 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom"
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import Login from "./pages/Login"
-import Dashboard from "./pages/Dashboard"
+import Login from "./pages/Login";
+import Dashboard from "./pages/Dashboard";
 import Devices from "./pages/Devices";
 import DeviceDetails from "./pages/DeviceDetails";
-import ProtectedRoute from "./components/ProtectedRoute";
 import SecurityLogs from "./pages/SecurityLogs";
 
+import ProtectedRoute from "./components/ProtectedRoute";
+import DashboardLayout from "./layouts/DashboardLayout";
+
+
 function App() {
-  return (
-    <BrowserRouter>
 
-      <Routes>
+    return (
 
-        <Route
-          path="/"
-          element={<Login />}
-        />
+        <BrowserRouter>
 
-  
+            <Routes>
 
-        <Route
-            path="/dashboard"
-            element={
-                <ProtectedRoute>
-                    <Dashboard />
-                </ProtectedRoute>
-            }
-        />
+                {/* LOGIN */}
 
-        <Route
-            path="/devices"
-            element={
-                <ProtectedRoute>
-                    <Devices />
-                </ProtectedRoute>
-            }
-        />
+                <Route
+                    path="/"
+                    element={<Login />}
+                />
 
-        <Route
-            path="/devices/:id"
-            element={
-                <ProtectedRoute>
-                    <DeviceDetails />
-                </ProtectedRoute>
-            }
-        />
 
-        <Route
-            path="/logs"
-            element={
-                <ProtectedRoute>
-                    <SecurityLogs />
-                </ProtectedRoute>
-            }
-        />
+                {/* PROTECTED DASHBOARD AREA */}
 
-      </Routes>
+                <Route
+                    element={
+                        <ProtectedRoute>
+                            <DashboardLayout />
+                        </ProtectedRoute>
+                    }
+                >
 
-    </BrowserRouter>
-  )
+                    <Route
+                        path="/dashboard"
+                        element={<Dashboard />}
+                    />
+
+                    <Route
+                        path="/devices"
+                        element={<Devices />}
+                    />
+
+                    <Route
+                        path="/devices/:id"
+                        element={<DeviceDetails />}
+                    />
+
+                    <Route
+                        path="/logs"
+                        element={<SecurityLogs />}
+                    />
+
+                </Route>
+
+            </Routes>
+
+        </BrowserRouter>
+
+    );
+
 }
 
-export default App
+export default App;
