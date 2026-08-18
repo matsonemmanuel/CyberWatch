@@ -142,9 +142,7 @@ function LogList({
                                                 CHANGE STATUS
                                             ========================== */}
 
-                                           {/* =========================
-                                                CHANGE STATUS
-                                            ========================== */}
+                                          
 
                                             <button
                                                 type="button"
@@ -186,6 +184,7 @@ function LogList({
                                                 type="button"
                                                 className="action-btn delete-btn"
                                                 title="Archive Log"
+                                                onClick={() => onArchiveLog(log)}
                                             >
                                                 📦
                                             </button>
