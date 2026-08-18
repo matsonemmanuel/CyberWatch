@@ -170,3 +170,60 @@ export async function updateLog(
 
     return data;
 }
+
+// =====================================================
+// UPDATE LOG STATUS
+// =====================================================
+
+export async function updateLogStatus(
+    logId,
+    status
+) {
+
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(
+        `${API_URL}/logs/${logId}/status`,
+        {
+            method: "PATCH",
+
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+            },
+
+            body: JSON.stringify({
+                status: status
+            })
+        }
+    );
+
+
+    const data = await response.json();
+
+    return data;
+}
+
+// =====================================================
+// ARCHIVE LOG
+// =====================================================
+
+export async function archiveLog(logId) {
+
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(
+        `${API_URL}/logs/${logId}/archive`,
+        {
+            method: "PATCH",
+
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
+
+    const data = await response.json();
+
+    return data;
+}

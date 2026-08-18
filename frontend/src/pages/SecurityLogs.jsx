@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
 
-import { getLogs, getLog } from "../services/logsService";
+import {
+    getLogs,
+    getLog,
+    updateLogStatus,
+    archiveLog
+} from "../services/logsService";
 
 import LogList from "../components/LogList";
 import ViewLogModal from "../components/ViewLogModal";
@@ -112,6 +117,195 @@ function SecurityLogs() {
 
     }
 
+    /* =====================================================
+    CHANGE LOG STATUS
+    ===================================================== */
+
+    async function handleChangeLogStatus(log) {
+
+        try {
+
+            // Decide the next status
+            let newStatus;
+
+            if (log.status === "open") {
+
+                newStatus = "investigating";
+
+            } else if (log.status === "investigating") {
+
+                newStatus = "resolved";
+
+            } else {
+
+                console.log(
+                    `Log ${log.id} is already resolved.`
+                );
+
+                return;
+
+            }
+
+            const confirmed = window.confirm(
+                `Are you sure you want to change Log #${log.id} from "${log.status}" to "${newStatus}"?`
+            );
+
+            if (!confirmed) {
+
+                return;
+
+            }
+
+
+            console.log(
+                `Changing log ${log.id} status to ${newStatus}`
+            );
+
+
+            const data = await updateLogStatus(
+                log.id,
+                newStatus
+            );
+
+
+            console.log(
+                "Status update response:",
+                data
+            );
+
+
+            if (data.status === "success") {
+
+                // Reload the current page of logs
+                const refreshedData = await getLogs(
+                    searchTerm,
+                    severityFilter,
+                    statusFilter,
+                    archivedFilter,
+                    currentPage,
+                    limit
+                );
+
+
+                if (refreshedData.status === "success") {
+
+                    setLogs(
+                        refreshedData.logs || []
+                    );
+
+                    setTotalLogs(
+                        refreshedData.total_logs || 0
+                    );
+
+                    setTotalPages(
+                        refreshedData.total_pages || 0
+                    );
+
+                }
+
+            } else {
+
+                console.error(
+                    "Failed to change log status:",
+                    data.message
+                );
+
+            }
+
+        } catch (error) {
+
+            console.error(
+                "Failed to change log status:",
+                error
+            );
+
+        }
+
+    }
+
+    /* =====================================================
+    ARCHIVE LOG
+    ===================================================== */
+
+    async function handleArchiveLog(log) {
+
+        try {
+
+            const confirmed = window.confirm(
+                `Are you sure you want to archive Log #${log.id}?`
+            );
+
+            if (!confirmed) {
+
+                return;
+
+            }
+
+
+            console.log(
+                `Archiving log ${log.id}`
+            );
+
+
+            const data = await archiveLog(
+                log.id
+            );
+
+
+            console.log(
+                "Archive response:",
+                data
+            );
+
+
+            if (data.status === "success") {
+
+                // Reload the current page of logs
+                const refreshedData = await getLogs(
+                    searchTerm,
+                    severityFilter,
+                    statusFilter,
+                    archivedFilter,
+                    currentPage,
+                    limit
+                );
+
+
+                if (refreshedData.status === "success") {
+
+                    setLogs(
+                        refreshedData.logs || []
+                    );
+
+                    setTotalLogs(
+                        refreshedData.total_logs || 0
+                    );
+
+                    setTotalPages(
+                        refreshedData.total_pages || 0
+                    );
+
+                }
+
+            } else {
+
+                console.error(
+                    "Failed to archive log:",
+                    data.message
+                );
+
+            }
+
+        } catch (error) {
+
+            console.error(
+                "Failed to archive log:",
+                error
+            );
+
+        }
+
+    }
 
     /* =====================================================
        CLOSE EDIT MODAL
@@ -274,16 +468,13 @@ function SecurityLogs() {
                LOG LIST
             ================================================= */}
 
-            <LogList
-
+           <LogList
                 logs={logs}
-
                 totalLogs={totalLogs}
-
                 onViewLog={handleViewLog}
-
                 onEditLog={handleEditLog}
-
+                onChangeStatus={handleChangeLogStatus}
+                onArchiveLog={handleArchiveLog}
             />
 
 

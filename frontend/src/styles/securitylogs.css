@@ -516,6 +516,38 @@
     white-space: nowrap;
 }
 
+/* =====================================================
+   STATUS ACTION BUTTON
+===================================================== */
+
+.status-btn {
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease,
+        opacity 0.2s ease;
+
+}
+
+
+.status-btn:hover:not(:disabled) {
+
+    transform: translateY(-1px);
+
+}
+
+
+.status-disabled {
+
+    opacity: 0.45;
+
+    cursor: not-allowed;
+
+    transform: none !important;
+
+}
+
 
 /* =========================================================
    SEVERITY

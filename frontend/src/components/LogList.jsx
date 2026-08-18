@@ -2,7 +2,9 @@ function LogList({
     logs,
     totalLogs,
     onViewLog,
-    onEditLog
+    onEditLog,
+    onChangeStatus,
+    onArchiveLog
 }) {
 
     return (
@@ -140,12 +142,39 @@ function LogList({
                                                 CHANGE STATUS
                                             ========================== */}
 
+                                           {/* =========================
+                                                CHANGE STATUS
+                                            ========================== */}
+
                                             <button
                                                 type="button"
-                                                className="action-btn disable-btn"
-                                                title="Change Status"
+                                                className={`action-btn status-btn ${
+                                                    log.status === "resolved"
+                                                        ? "status-disabled"
+                                                        : ""
+                                                }`}
+                                                title={
+                                                    log.status === "open"
+                                                        ? "Move to Investigating"
+                                                        : log.status === "investigating"
+                                                            ? "Resolve Log"
+                                                            : "Log Resolved"
+                                                }
+                                                aria-label={
+                                                    log.status === "open"
+                                                        ? "Move log to investigating"
+                                                        : log.status === "investigating"
+                                                            ? "Resolve log"
+                                                            : "Log already resolved"
+                                                }
+                                                disabled={log.status === "resolved"}
+                                                onClick={() => onChangeStatus(log)}
                                             >
-                                                🔄
+                                                {log.status === "open"
+                                                    ? "🔍"
+                                                    : log.status === "investigating"
+                                                        ? "✅"
+                                                        : "✓"}
                                             </button>
 
 
