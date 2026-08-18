@@ -160,22 +160,17 @@
     color: #ff7b86;
 }
 
+
 /* =====================================================
    ALERT META
 ===================================================== */
 
 .alert-meta {
-
     display: flex;
-
     justify-content: center;
-
     align-items: center;
-
     gap: 12px;
-
     margin-top: 12px;
-
 }
 
 
@@ -184,46 +179,27 @@
 ===================================================== */
 
 .alert-status {
-
     display: inline-block;
-
     padding: 7px 14px;
-
     border-radius: 8px;
-
     font-size: 14px;
-
     font-weight: 700;
-
     text-transform: uppercase;
-
 }
-
 
 .alert-status.active {
-
     background: rgba(255, 170, 0, 0.15);
-
     color: #ffb020;
-
 }
-
 
 .alert-status.acknowledged {
-
     background: rgba(80, 150, 255, 0.15);
-
     color: #62a8ff;
-
 }
 
-
 .alert-status.resolved {
-
     background: rgba(50, 210, 120, 0.15);
-
     color: #50d278;
-
 }
 
 
@@ -232,13 +208,9 @@
 ===================================================== */
 
 .alert-actions {
-
     display: flex;
-
     justify-content: center;
-
     margin-top: 18px;
-
 }
 
 
@@ -247,12 +219,317 @@
 ===================================================== */
 
 .alert-action-btn {
+    border: none;
+    border-radius: 8px;
+    padding: 10px 18px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.alert-action-btn:hover {
+    transform: translateY(-1px);
+}
+
+
+/* =====================================================
+   VIEW ALERT BUTTON
+===================================================== */
+
+.view-alert-btn {
+    background: #64748b;
+    color: #ffffff;
+}
+
+.view-alert-btn:hover {
+    background: #475569;
+}
+
+
+/* =====================================================
+   ACKNOWLEDGE
+===================================================== */
+
+.acknowledge-btn {
+    background: #3b82f6;
+    color: white;
+}
+
+.acknowledge-btn:hover {
+    background: #2563eb;
+}
+
+
+/* =====================================================
+   RESOLVE
+===================================================== */
+
+.resolve-btn {
+    background: #22c55e;
+    color: white;
+}
+
+.resolve-btn:hover {
+    background: #16a34a;
+}
+
+
+/* =====================================================
+   RESOLVED LABEL
+===================================================== */
+
+.alert-resolved-label {
+    color: #50d278;
+    font-weight: 700;
+    font-size: 15px;
+}
+
+
+/* =====================================================
+   VIEW ALERT MODAL OVERLAY
+===================================================== */
+
+.alert-modal-overlay {
+    position: fixed;
+
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    width: 100%;
+    height: 100%;
+
+    background: rgba(2, 8, 20, 0.78);
+
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    padding: 20px;
+
+    box-sizing: border-box;
+
+    z-index: 9999;
+
+    backdrop-filter: blur(4px);
+}
+
+
+/* =====================================================
+   ALERT MODAL
+===================================================== */
+
+.alert-modal {
+    width: 100%;
+    max-width: 650px;
+
+    max-height: 90vh;
+
+    overflow-y: auto;
+
+    background: #1d2a3d;
+
+    border: 1px solid #30415c;
+
+    border-radius: 16px;
+
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.5);
+
+    color: #ffffff;
+
+    animation: alertModalAppear 0.2s ease-out;
+}
+
+
+/* =====================================================
+   MODAL ANIMATION
+===================================================== */
+
+@keyframes alertModalAppear {
+
+    from {
+        opacity: 0;
+        transform: translateY(-15px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+}
+
+
+/* =====================================================
+   MODAL HEADER
+===================================================== */
+
+.alert-modal-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    padding: 20px 24px;
+
+    border-bottom: 1px solid #30415c;
+}
+
+
+.alert-modal-header h2 {
+
+    margin: 0;
+
+    font-size: 24px;
+
+    color: #ffffff;
+
+}
+
+
+/* =====================================================
+   MODAL CLOSE X
+===================================================== */
+
+.alert-modal-close {
+
+    width: 36px;
+
+    height: 36px;
 
     border: none;
 
     border-radius: 8px;
 
-    padding: 10px 18px;
+    background: #334155;
+
+    color: #ffffff;
+
+    font-size: 24px;
+
+    line-height: 1;
+
+    cursor: pointer;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    transition: 0.2s ease;
+
+}
+
+
+.alert-modal-close:hover {
+
+    background: #475569;
+
+    transform: rotate(90deg);
+
+}
+
+
+/* =====================================================
+   MODAL BODY
+===================================================== */
+
+.alert-modal-body {
+
+    padding: 24px;
+
+}
+
+
+/* =====================================================
+   ALERT DETAIL ROW
+===================================================== */
+
+.alert-detail-row {
+
+    display: grid;
+
+    grid-template-columns: 140px 1fr;
+
+    gap: 20px;
+
+    align-items: center;
+
+    padding: 15px 0;
+
+    border-bottom: 1px solid rgba(48, 65, 92, 0.6);
+
+}
+
+
+.alert-detail-row:last-child {
+
+    border-bottom: none;
+
+}
+
+
+.alert-detail-row strong {
+
+    color: #9aa9c2;
+
+    font-size: 14px;
+
+    text-transform: uppercase;
+
+}
+
+
+.alert-detail-row span {
+
+    color: #ffffff;
+
+    font-size: 15px;
+
+    word-break: break-word;
+
+}
+
+
+/* =====================================================
+   MODAL FOOTER
+===================================================== */
+
+.alert-modal-footer {
+
+    display: flex;
+
+    justify-content: flex-end;
+
+    padding: 18px 24px;
+
+    border-top: 1px solid #30415c;
+
+}
+
+
+/* =====================================================
+   MODAL CLOSE BUTTON
+===================================================== */
+
+.alert-modal-close-btn {
+
+    border: none;
+
+    border-radius: 8px;
+
+    padding: 10px 20px;
+
+    background: #334155;
+
+    color: #ffffff;
 
     font-size: 14px;
 
@@ -265,7 +542,9 @@
 }
 
 
-.alert-action-btn:hover {
+.alert-modal-close-btn:hover {
+
+    background: #475569;
 
     transform: translateY(-1px);
 
@@ -273,55 +552,90 @@
 
 
 /* =====================================================
-   ACKNOWLEDGE
+   MODAL SCROLLBAR
 ===================================================== */
 
-.acknowledge-btn {
+.alert-modal::-webkit-scrollbar {
 
-    background: #3b82f6;
-
-    color: white;
+    width: 8px;
 
 }
 
 
-.acknowledge-btn:hover {
+.alert-modal::-webkit-scrollbar-track {
 
-    background: #2563eb;
+    background: #172235;
+
+}
+
+
+.alert-modal::-webkit-scrollbar-thumb {
+
+    background: #475569;
+
+    border-radius: 10px;
+
+}
+
+
+.alert-modal::-webkit-scrollbar-thumb:hover {
+
+    background: #64748b;
 
 }
 
 
 /* =====================================================
-   RESOLVE
+   RESPONSIVE DESIGN
 ===================================================== */
 
-.resolve-btn {
+@media (max-width: 768px) {
 
-    background: #22c55e;
+    .alerts-page {
 
-    color: white;
+        padding: 20px;
 
-}
-
-
-.resolve-btn:hover {
-
-    background: #16a34a;
-
-}
+    }
 
 
-/* =====================================================
-   RESOLVED LABEL
-===================================================== */
+    .alert-summary {
 
-.alert-resolved-label {
+        flex-direction: column;
 
-    color: #50d278;
+    }
 
-    font-weight: 700;
 
-    font-size: 15px;
+    .alert-summary-card {
+
+        width: 100%;
+
+        box-sizing: border-box;
+
+    }
+
+
+    .alert-modal {
+
+        max-width: 100%;
+
+        max-height: 92vh;
+
+    }
+
+
+    .alert-detail-row {
+
+        grid-template-columns: 1fr;
+
+        gap: 6px;
+
+    }
+
+
+    .alert-modal-header h2 {
+
+        font-size: 20px;
+
+    }
 
 }
