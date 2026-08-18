@@ -311,7 +311,9 @@ def get_log_service(log_id):
         "data": log
     }, 200
 
-# Update Log Service
+# =========================================================
+# UPDATE LOG SERVICE
+# =========================================================
 
 def update_log_service(
     log_id,
@@ -325,8 +327,16 @@ def update_log_service(
     Only severity can be changed.
     Incident/event and device are immutable.
 
-    A reason/comment is required and recorded
-    in the activity history.
+    A reason/comment is required.
+
+    Every change is recorded in log_history with:
+        - log ID
+        - user
+        - field changed
+        - old value
+        - new value
+        - reason
+        - timestamp
     """
 
     severity = data.get("severity")
@@ -361,7 +371,7 @@ def update_log_service(
 
 
     # =====================================================
-    # VALIDATE COMMENT
+    # VALIDATE COMMENT / REASON
     # =====================================================
 
     if not comment or not comment.strip():
@@ -387,7 +397,7 @@ def update_log_service(
     try:
 
         # =================================================
-        # VERIFY LOG EXISTS
+        # FIND LOG
         # =================================================
 
         cursor.execute(
@@ -423,6 +433,25 @@ def update_log_service(
 
 
         # =================================================
+        # GET OLD SEVERITY
+        # =================================================
+
+        old_severity = log["severity"]
+
+
+        # =================================================
+        # CHECK WHETHER ANYTHING ACTUALLY CHANGED
+        # =================================================
+
+        if old_severity == severity:
+
+            return {
+                "status": "error",
+                "message": "No change was made to the severity"
+            }, 400
+
+
+        # =================================================
         # UPDATE ONLY SEVERITY
         # =================================================
 
@@ -439,11 +468,46 @@ def update_log_service(
         )
 
 
+        # =================================================
+        # RECORD CHANGE IN LOG HISTORY
+        # =================================================
+
+        cursor.execute(
+            """
+            INSERT INTO log_history (
+                log_id,
+                user_id,
+                username,
+                field_name,
+                old_value,
+                new_value,
+                reason,
+                created_at
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                log_id,
+                current_user_id,
+                current_username,
+                "severity",
+                old_severity,
+                severity,
+                comment,
+                datetime.now(timezone.utc).isoformat()
+            )
+        )
+
+
+        # =================================================
+        # COMMIT BOTH CHANGES
+        # =================================================
+
         connection.commit()
 
 
         # =================================================
-        # RETRIEVE UPDATED LOG
+        # GET UPDATED LOG
         # =================================================
 
         cursor.execute(
@@ -459,13 +523,15 @@ def update_log_service(
 
 
         # =================================================
-        # RECORD AUDIT ACTIVITY
+        # RECORD GENERAL ACTIVITY
         # =================================================
 
         log_activity(
             current_user_id,
             current_username,
-            f"Updated log {log_id}: {comment}"
+            f"Updated log {log_id}: "
+            f"severity changed from {old_severity} "
+            f"to {severity}"
         )
 
 
@@ -474,35 +540,56 @@ def update_log_service(
         # =================================================
 
         updated_log = {
+
             "id": row["id"],
+
             "timestamp": row["timestamp"],
+
             "device_id": row["device_id"],
+
             "event": row["event"],
+
             "severity": row["severity"],
+
             "status": row["status"],
+
             "archived": bool(row["archived"])
+
         }
 
 
         return {
+
             "status": "success",
+
             "message": "Log updated successfully",
+
             "data": updated_log
+
         }, 200
 
 
     except Exception as error:
 
+        # =================================================
+        # ROLLBACK EVERYTHING IF SOMETHING FAILS
+        # =================================================
+
         connection.rollback()
+
 
         print(
             "Error updating log:",
             error
         )
 
+
         return {
+
             "status": "error",
+
             "message": "Failed to update log"
+
         }, 500
 
 
@@ -765,3 +852,72 @@ def archive_log_service(
         "message": "Log archived successfully",
         "data": updated_log
     }, 200
+
+    # =========================================================
+# GET LOG HISTORY SERVICE
+# =========================================================
+
+def get_log_history_service():
+
+    connection = get_db_connection()
+
+    cursor = connection.cursor()
+
+    try:
+
+        cursor.execute(
+            """
+            SELECT
+                id,
+                log_id,
+                user_id,
+                username,
+                field_name,
+                old_value,
+                new_value,
+                reason,
+                created_at
+            FROM log_history
+            ORDER BY created_at DESC
+            """
+        )
+
+        rows = cursor.fetchall()
+
+        history = []
+
+        for row in rows:
+
+            history.append({
+                "id": row["id"],
+                "log_id": row["log_id"],
+                "user_id": row["user_id"],
+                "username": row["username"],
+                "field_name": row["field_name"],
+                "old_value": row["old_value"],
+                "new_value": row["new_value"],
+                "reason": row["reason"],
+                "created_at": row["created_at"]
+            })
+
+        return {
+            "status": "success",
+            "total_changes": len(history),
+            "history": history
+        }, 200
+
+    except Exception as error:
+
+        print(
+            "Error loading log history:",
+            error
+        )
+
+        return {
+            "status": "error",
+            "message": "Failed to load log history"
+        }, 500
+
+    finally:
+
+        connection.close()

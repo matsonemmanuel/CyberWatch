@@ -8,6 +8,7 @@ import SecurityLogs from "./pages/SecurityLogs";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import DashboardLayout from "./layouts/DashboardLayout";
+import History from "./pages/History";
 
 
 function App() {
@@ -54,6 +55,11 @@ function App() {
                     <Route
                         path="/logs"
                         element={<SecurityLogs />}
+                    />
+
+                    <Route
+                        path="/history"
+                        element={<History />}
                     />
 
                 </Route>

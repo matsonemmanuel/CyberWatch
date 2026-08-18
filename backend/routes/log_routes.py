@@ -12,7 +12,12 @@ from services.log_services import (
     get_log_service,
     update_log_service,
     update_log_status_service,
-    archive_log_service
+    archive_log_service,
+    get_log_history_service
+)
+
+from services.log_history_service import (
+    get_log_history_service
 )
 
 from database.db import get_db_connection
@@ -135,5 +140,17 @@ def archive_log(log_id):
         g.current_user["user_id"],
         g.current_user["username"]
     )
+
+    return jsonify(result), status_code
+
+# =========================================================
+# GET LOG HISTORY
+# =========================================================
+
+@log_bp.route('/api/v1/log-history', methods=['GET'])
+@login_required
+def get_log_history():
+
+    result, status_code = get_log_history_service()
 
     return jsonify(result), status_code
