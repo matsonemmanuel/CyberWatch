@@ -1,0 +1,159 @@
+.view-device-overlay {
+    position: fixed;
+    inset: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+
+    background: rgba(2, 6, 23, 0.75);
+
+    z-index: 2000;
+}
+
+
+.view-device-modal {
+    width: 100%;
+    max-width: 620px;
+    max-height: 90vh;
+
+    display: flex;
+    flex-direction: column;
+
+    background: #1e293b;
+
+    border: 1px solid #334155;
+    border-radius: 16px;
+
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+
+    overflow: hidden;
+}
+
+
+.view-device-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 20px 24px;
+
+    background: #172338;
+
+    border-bottom: 1px solid #334155;
+}
+
+
+.view-device-header h2 {
+    margin: 0;
+
+    color: #f8fafc;
+
+    font-size: 22px;
+}
+
+
+.view-device-close {
+    width: 36px;
+    height: 36px;
+
+    border: none;
+    border-radius: 8px;
+
+    background: #334155;
+
+    color: white;
+
+    font-size: 24px;
+
+    cursor: pointer;
+}
+
+
+.view-device-body {
+    padding: 24px;
+
+    overflow-y: auto;
+}
+
+
+.device-detail {
+    display: grid;
+
+    grid-template-columns: 180px minmax(0, 1fr);
+
+    align-items: center;
+
+    gap: 20px;
+
+    min-height: 50px;
+
+    padding: 10px 0;
+
+    border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+
+.device-detail-label {
+    color: #94a3b8;
+
+    font-size: 14px;
+
+    font-weight: 600;
+}
+
+
+.device-detail-value {
+    color: #f8fafc;
+
+    font-size: 15px;
+
+    font-weight: 500;
+
+    overflow-wrap: anywhere;
+}
+
+
+.view-device-footer {
+    display: flex;
+
+    justify-content: flex-end;
+
+    padding: 16px 24px;
+
+    background: #172338;
+
+    border-top: 1px solid #334155;
+}
+
+
+.view-device-close-btn {
+    padding: 10px 20px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background: #0ea5e9;
+
+    color: white;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+
+@media (max-width: 600px) {
+
+    .device-detail {
+        grid-template-columns: 1fr;
+
+        gap: 4px;
+    }
+
+}

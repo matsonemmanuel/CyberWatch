@@ -13,7 +13,7 @@ def get_dashboard_stats_service():
     queries = {
 
         "total_devices":
-            "SELECT COUNT(*) FROM devices",
+    "SELECT COUNT(*) FROM devices WHERE deleted = 0",
 
         "total_logs":
             "SELECT COUNT(*) FROM logs",

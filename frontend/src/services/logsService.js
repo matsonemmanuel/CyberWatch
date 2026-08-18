@@ -1,9 +1,16 @@
+const API_URL = "http://127.0.0.1:5000/api/v1";
+
+
+// =====================================================
+// GET RECENT LOGS
+// =====================================================
+
 export async function getRecentLogs() {
 
     const token = localStorage.getItem("token");
 
     const response = await fetch(
-        "http://127.0.0.1:5000/api/v1/logs",
+        `${API_URL}/logs`,
         {
             headers: {
                 Authorization: `Bearer ${token}`
@@ -14,8 +21,12 @@ export async function getRecentLogs() {
     const data = await response.json();
 
     return data;
-
 }
+
+
+// =====================================================
+// GET LOGS
+// =====================================================
 
 export async function getLogs(
     search = "",
@@ -30,34 +41,130 @@ export async function getLogs(
 
     const params = new URLSearchParams();
 
+
     if (search) {
-        params.append("search", search);
+
+        params.append(
+            "search",
+            search
+        );
+
     }
 
-    if (severity && severity !== "All") {
-        params.append("severity", severity);
+
+    if (
+        severity &&
+        severity !== "All"
+    ) {
+
+        params.append(
+            "severity",
+            severity
+        );
+
     }
 
-    if (status && status !== "All") {
-        params.append("status", status);
+
+    if (
+        status &&
+        status !== "All"
+    ) {
+
+        params.append(
+            "status",
+            status
+        );
+
     }
+
 
     if (archived === "archived") {
-        params.append("archived", "true");
+
+        params.append(
+            "archived",
+            "true"
+        );
+
     }
 
-    params.append("page", page);
 
-    params.append("limit", limit);
+    params.append(
+        "page",
+        page
+    );
+
+
+    params.append(
+        "limit",
+        limit
+    );
+
 
     const response = await fetch(
-        `http://127.0.0.1:5000/api/v1/logs?${params.toString()}`,
+        `${API_URL}/logs?${params.toString()}`,
         {
             headers: {
                 Authorization: `Bearer ${token}`
             }
         }
     );
+
+
+    const data = await response.json();
+
+    return data;
+}
+
+
+// =====================================================
+// GET SINGLE LOG
+// =====================================================
+
+export async function getLog(logId) {
+
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(
+        `${API_URL}/logs/${logId}`,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
+
+
+    const data = await response.json();
+
+    return data;
+}
+
+
+// =====================================================
+// UPDATE LOG
+// =====================================================
+
+export async function updateLog(
+    logId,
+    logData
+) {
+
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(
+        `${API_URL}/logs/${logId}`,
+        {
+            method: "PUT",
+
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+            },
+
+            body: JSON.stringify(logData)
+        }
+    );
+
 
     const data = await response.json();
 

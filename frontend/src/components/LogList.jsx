@@ -1,4 +1,9 @@
-function LogList({ logs, totalLogs }) {
+function LogList({
+    logs,
+    totalLogs,
+    onViewLog,
+    onEditLog
+}) {
 
     return (
 
@@ -44,9 +49,15 @@ function LogList({ logs, totalLogs }) {
 
                                 <tr key={log.id}>
 
-                                    <td>{log.id}</td>
+                                    <td>
+                                        {log.id}
+                                    </td>
 
-                                    <td>{log.event}</td>
+
+                                    <td>
+                                        {log.event}
+                                    </td>
+
 
                                     <td>
 
@@ -58,6 +69,7 @@ function LogList({ logs, totalLogs }) {
 
                                     </td>
 
+
                                     <td>
 
                                         <span
@@ -68,6 +80,7 @@ function LogList({ logs, totalLogs }) {
 
                                     </td>
 
+
                                     <td>
 
                                         {log.device
@@ -75,6 +88,7 @@ function LogList({ logs, totalLogs }) {
                                             : "Unknown Device"}
 
                                     </td>
+
 
                                     <td>
 
@@ -84,37 +98,69 @@ function LogList({ logs, totalLogs }) {
 
                                     </td>
 
+
                                     <td>
 
                                         <div className="action-buttons">
 
+
+                                            {/* =========================
+                                                VIEW LOG
+                                            ========================== */}
+
                                             <button
+                                                type="button"
                                                 className="action-btn view-btn"
                                                 title="View Log"
+                                                onClick={() =>
+                                                    onViewLog(log)
+                                                }
                                             >
                                                 👁
                                             </button>
 
+
+                                            {/* =========================
+                                                EDIT LOG
+                                            ========================== */}
+
                                             <button
+                                                type="button"
                                                 className="action-btn edit-btn"
                                                 title="Edit Log"
+                                                onClick={() =>
+                                                    onEditLog(log)
+                                                }
                                             >
                                                 ✏️
                                             </button>
 
+
+                                            {/* =========================
+                                                CHANGE STATUS
+                                            ========================== */}
+
                                             <button
+                                                type="button"
                                                 className="action-btn disable-btn"
                                                 title="Change Status"
                                             >
                                                 🔄
                                             </button>
 
+
+                                            {/* =========================
+                                                ARCHIVE LOG
+                                            ========================== */}
+
                                             <button
+                                                type="button"
                                                 className="action-btn delete-btn"
                                                 title="Archive Log"
                                             >
                                                 📦
                                             </button>
+
 
                                         </div>
 

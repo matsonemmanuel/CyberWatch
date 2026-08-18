@@ -1,11 +1,14 @@
 /* =========================================================
+   CYBERWATCH - SECURITY LOGS PAGE
+   ========================================================= */
+
+
+/* =========================================================
    SECURITY LOGS PAGE
    ========================================================= */
 
 .security-logs-page {
-
     width: 100%;
-
     min-width: 0;
 
     margin: 0;
@@ -14,14 +17,9 @@
     box-sizing: border-box;
 
     display: flex;
-
     flex-direction: column;
 
     gap: 14px;
-
-    /*
-       Allow the page to grow naturally.
-    */
 
     overflow: visible;
 }
@@ -29,18 +27,16 @@
 
 /* =========================================================
    LOG TOOLBAR
+   - Stays visible while page is being viewed
    ========================================================= */
 
 .log-toolbar {
-
     flex: 0 0 auto;
 
     width: 100%;
-
     min-height: 64px;
 
     display: flex;
-
     align-items: center;
 
     gap: 10px;
@@ -55,15 +51,10 @@
 
     border-radius: 14px;
 
-    /*
-       THIS is what should stay visible.
-    */
-
     position: sticky;
-
     top: 0;
 
-    z-index: 50;
+    z-index: 100;
 }
 
 
@@ -72,11 +63,9 @@
    ========================================================= */
 
 .log-toolbar input {
-
     flex: 1 1 auto;
 
     min-width: 200px;
-
     height: 44px;
 
     padding: 0 15px;
@@ -84,13 +73,11 @@
     box-sizing: border-box;
 
     border: 1px solid #334155;
-
     border-radius: 9px;
 
     outline: none;
 
     background: #172338;
-
     color: #f8fafc;
 
     font-size: 14px;
@@ -98,7 +85,6 @@
 
 
 .log-toolbar input::placeholder {
-
     color: #94a3b8;
 }
 
@@ -108,21 +94,19 @@
    ========================================================= */
 
 .log-toolbar select {
-
     flex: 0 0 auto;
 
     height: 44px;
-
     min-width: 145px;
 
     padding: 0 12px;
 
-    border: 1px solid #334155;
+    box-sizing: border-box;
 
+    border: 1px solid #334155;
     border-radius: 9px;
 
     background: #172338;
-
     color: #f8fafc;
 
     outline: none;
@@ -136,35 +120,30 @@
    ========================================================= */
 
 .reset-btn {
-
     flex: 0 0 auto;
 
     height: 44px;
-
     min-width: 96px;
 
     padding: 0 20px;
 
     border: none;
-
     border-radius: 9px;
 
     background: #0ea5e9;
-
-    color: white;
+    color: #ffffff;
 
     font-weight: 700;
 
     cursor: pointer;
 
-    transition: background 0.2s;
+    transition: background 0.2s ease;
 
     white-space: nowrap;
 }
 
 
 .reset-btn:hover {
-
     background: #0284c7;
 }
 
@@ -174,15 +153,12 @@
    ========================================================= */
 
 .log-list-card {
-
     width: 100%;
-
     min-width: 0;
 
     box-sizing: border-box;
 
     display: flex;
-
     flex-direction: column;
 
     background: #1e293b;
@@ -191,16 +167,21 @@
 
     border-radius: 16px;
 
+    /*
+       IMPORTANT:
+       Do NOT put overflow:auto here.
+       The table container below is the scrolling area.
+    */
     overflow: hidden;
 }
 
 
 /* =========================================================
    LOG HEADER
+   - Heading + Total Logs remain visible
    ========================================================= */
 
 .log-header {
-
     flex: 0 0 96px;
 
     width: 100%;
@@ -210,59 +191,65 @@
     box-sizing: border-box;
 
     display: flex;
-
     flex-direction: column;
 
     justify-content: center;
-
     align-items: center;
 
     background: #1e293b;
 
     border-bottom: 1px solid #334155;
 
-    z-index: 30;
+    position: sticky;
+    top: 0;
+
+    z-index: 50;
 }
 
 
 .log-header h2 {
-
     margin: 0 0 6px;
 
     color: #f8fafc;
 
     font-size: 28px;
-
     font-weight: 700;
+
+    line-height: 1.2;
 }
 
 
 .log-header span {
-
     color: #94a3b8;
 
     font-size: 16px;
+
+    line-height: 1.2;
 }
+
 
 /* =========================================================
    TABLE SCROLL AREA
+   - THIS is where vertical scrolling happens
    ========================================================= */
 
 .log-table-container {
-
     width: 100%;
 
     min-width: 0;
 
+    /*
+       Give the table its own scrolling area.
+       Adjust 520px if you want the table taller/shorter.
+    */
+    height: 520px;
+
+    max-height: 520px;
+
     box-sizing: border-box;
 
-    /*
-       Horizontal scrolling is allowed when necessary.
-       Vertical scrolling is handled by the page.
-    */
-
     overflow-x: auto;
-    overflow-y: visible;
+    overflow-y: auto;
 
     scrollbar-width: thin;
 
@@ -270,21 +257,22 @@
 }
 
 
-.log-table-container::-webkit-scrollbar {
+/* =========================================================
+   TABLE SCROLLBAR
+   ========================================================= */
 
+.log-table-container::-webkit-scrollbar {
     width: 8px;
     height: 8px;
 }
 
 
 .log-table-container::-webkit-scrollbar-track {
-
     background: #172338;
 }
 
 
 .log-table-container::-webkit-scrollbar-thumb {
-
     background: #475569;
 
     border-radius: 10px;
@@ -292,7 +280,6 @@
 
 
 .log-table-container::-webkit-scrollbar-thumb:hover {
-
     background: #64748b;
 }
 
@@ -302,23 +289,30 @@
    ========================================================= */
 
 .log-table {
-
     width: 100%;
 
-    min-width: 1050px;
+    /*
+       Larger minimum width gives every column,
+       especially Actions, enough room.
+    */
+    min-width: 1250px;
 
     border-collapse: collapse;
 
-    table-layout: fixed;
+    /*
+       AUTO is important here.
+       It allows content to receive the space it needs.
+    */
+    table-layout: auto;
 }
 
 
 /* =========================================================
    TABLE HEADER
+   - Sticky while table scrolls
    ========================================================= */
 
 .log-table thead {
-
     position: sticky;
 
     top: 0;
@@ -328,13 +322,6 @@
 
 
 .log-table th {
-
-    position: sticky;
-
-    top: 0;
-
-    z-index: 20;
-
     height: 64px;
 
     padding: 16px 22px;
@@ -352,6 +339,12 @@
     font-size: 15px;
 
     font-weight: 700;
+
+    position: sticky;
+
+    top: 0;
+
+    z-index: 20;
 }
 
 
@@ -359,45 +352,59 @@
    COLUMN WIDTHS
    ========================================================= */
 
+/* ID */
 .log-table th:nth-child(1),
 .log-table td:nth-child(1) {
-
-    width: 8%;
+    min-width: 70px;
+    width: 7%;
 }
 
 
+/* EVENT */
 .log-table th:nth-child(2),
 .log-table td:nth-child(2) {
-
-    width: 34%;
+    min-width: 300px;
+    width: 28%;
 }
 
 
+/* SEVERITY */
 .log-table th:nth-child(3),
 .log-table td:nth-child(3) {
-
-    width: 14%;
+    min-width: 140px;
+    width: 12%;
 }
 
 
+/* STATUS */
 .log-table th:nth-child(4),
 .log-table td:nth-child(4) {
-
-    width: 13%;
+    min-width: 140px;
+    width: 12%;
 }
 
 
+/* DEVICE */
 .log-table th:nth-child(5),
 .log-table td:nth-child(5) {
-
-    width: 16%;
+    min-width: 190px;
+    width: 17%;
 }
 
 
+/* DATE / TIME */
 .log-table th:nth-child(6),
 .log-table td:nth-child(6) {
+    min-width: 210px;
+    width: 17%;
+}
 
-    width: 15%;
+
+/* ACTIONS */
+.log-table th:nth-child(7),
+.log-table td:nth-child(7) {
+    min-width: 210px;
+    width: 17%;
 }
 
 
@@ -406,7 +413,6 @@
    ========================================================= */
 
 .log-table td {
-
     height: 72px;
 
     padding: 16px 22px;
@@ -420,18 +426,94 @@
     font-size: 16px;
 
     vertical-align: middle;
+
+    box-sizing: border-box;
 }
 
 
-.log-table tbody tr {
+/* =========================================================
+   ROWS
+   ========================================================= */
 
-    transition: background 0.2s;
+.log-table tbody tr {
+    transition: background 0.2s ease;
 }
 
 
 .log-table tbody tr:hover {
-
     background: #273449;
+}
+
+
+/* =========================================================
+   EVENT TEXT
+   ========================================================= */
+
+.log-table td:nth-child(2) {
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+/* =========================================================
+   ACTIONS
+   - Prevent buttons from overlapping text
+   ========================================================= */
+
+.log-table td:last-child {
+    min-width: 210px;
+
+    padding-left: 12px;
+    padding-right: 12px;
+
+    white-space: nowrap;
+
+    overflow: visible;
+}
+
+
+/*
+   Works whether your action wrapper is a div,
+   section, or another element.
+*/
+
+.log-table td:last-child > div,
+.log-table td:last-child > section,
+.log-table td:last-child > span {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-start;
+
+    gap: 8px;
+
+    flex-wrap: nowrap;
+
+    white-space: nowrap;
+}
+
+
+/*
+   Prevent action buttons from shrinking.
+*/
+
+.log-table td:last-child button {
+    flex: 0 0 44px;
+
+    width: 44px;
+    min-width: 44px;
+
+    height: 44px;
+
+    margin: 0;
+
+    box-sizing: border-box;
+
+    white-space: nowrap;
 }
 
 
@@ -440,7 +522,6 @@
    ========================================================= */
 
 .severity-badge {
-
     display: inline-flex;
 
     align-items: center;
@@ -461,7 +542,6 @@
 
 
 .severity-badge.low {
-
     background: rgba(34, 197, 94, 0.18);
 
     color: #22c55e;
@@ -469,7 +549,6 @@
 
 
 .severity-badge.medium {
-
     background: rgba(245, 158, 11, 0.18);
 
     color: #facc15;
@@ -477,7 +556,6 @@
 
 
 .severity-badge.high {
-
     background: rgba(239, 68, 68, 0.18);
 
     color: #f87171;
@@ -489,31 +567,29 @@
    ========================================================= */
 
 .log-status {
-
     font-weight: 600;
 
     text-transform: capitalize;
+
+    white-space: nowrap;
 }
 
 
 .log-status.open {
-
     color: #f8fafc;
 }
 
 
 .log-status.resolved {
-
     color: #22c55e;
 }
 
 
 /* =========================================================
-   EMPTY
+   EMPTY LOGS
    ========================================================= */
 
 .empty-logs {
-
     text-align: center;
 
     padding: 40px !important;
@@ -524,9 +600,13 @@
 
 /* =========================================================
    PAGINATION
+   - Always visible at the bottom
    ========================================================= */
 
 .pagination {
+    flex: 0 0 auto;
+
+    min-height: 64px;
 
     display: flex;
 
@@ -536,19 +616,32 @@
 
     gap: 20px;
 
-    padding: 16px 0;
+    padding: 10px 16px;
 
     box-sizing: border-box;
 
     background: #1e293b;
 
-    z-index: 30;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+
+    border-radius: 12px;
+
+    position: sticky;
+
+    bottom: 0;
+
+    z-index: 100;
 }
 
 
-.pagination button {
+/* =========================================================
+   PAGINATION BUTTONS
+   ========================================================= */
 
-    padding: 9px 18px;
+.pagination button {
+    min-width: 100px;
+
+    padding: 10px 18px;
 
     border: none;
 
@@ -556,24 +649,26 @@
 
     background: #0ea5e9;
 
-    color: white;
+    color: #ffffff;
 
     font-weight: 600;
 
     cursor: pointer;
 
-    transition: background 0.2s;
+    transition:
+        background 0.2s ease,
+        opacity 0.2s ease;
+
+    white-space: nowrap;
 }
 
 
 .pagination button:hover:not(:disabled) {
-
     background: #0284c7;
 }
 
 
 .pagination button:disabled {
-
     opacity: 0.4;
 
     cursor: not-allowed;
@@ -581,45 +676,130 @@
 
 
 .pagination span {
+    min-width: 110px;
+
+    text-align: center;
 
     color: #cbd5e1;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    white-space: nowrap;
 }
 
 
 /* =========================================================
-   RESPONSIVE
+   RESPONSIVE - 1000px
    ========================================================= */
 
 @media (max-width: 1000px) {
 
     .log-toolbar {
-
         flex-wrap: wrap;
 
         min-height: auto;
     }
 
-    .log-toolbar input {
 
+    .log-toolbar input {
         flex-basis: 100%;
     }
 
-    .log-toolbar select {
 
-        flex: 1;
+    .log-toolbar select {
+        flex: 1 1 180px;
+    }
+
+
+    .log-table-container {
+        height: 500px;
+
+        max-height: 500px;
     }
 }
 
 
-@media (max-width: 600px) {
+/* =========================================================
+   RESPONSIVE - 700px
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .log-toolbar {
+        padding: 10px;
+    }
+
 
     .log-toolbar select {
+        flex: 1 1 100%;
 
         min-width: 100%;
     }
 
-    .reset-btn {
 
+    .reset-btn {
         width: 100%;
+    }
+
+
+    .log-header {
+        min-height: 90px;
+
+        padding: 16px;
+    }
+
+
+    .log-header h2 {
+        font-size: 24px;
+    }
+
+
+    .log-table-container {
+        height: 450px;
+
+        max-height: 450px;
+    }
+
+
+    .pagination {
+        gap: 10px;
+
+        padding: 10px;
+    }
+
+
+    .pagination button {
+        min-width: 85px;
+
+        padding: 9px 12px;
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVE - 500px
+   ========================================================= */
+
+@media (max-width: 500px) {
+
+    .log-header h2 {
+        font-size: 21px;
+    }
+
+
+    .log-header span {
+        font-size: 14px;
+    }
+
+
+    .pagination {
+        justify-content: space-between;
+    }
+
+
+    .pagination span {
+        min-width: auto;
     }
 }

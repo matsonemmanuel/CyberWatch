@@ -1,17 +1,15 @@
 import "../styles/devicelist.css";
-import { useNavigate } from "react-router-dom";
 
 function DeviceList({
     devices,
     totalRecords,
     currentPage,
     perPage,
+    onViewDevice,
     onEditDevice,
     onToggleDeviceStatus,
     onDeleteDevice
 }) {
-
-    const navigate = useNavigate();
 
     const firstRecord =
         devices.length > 0
@@ -55,12 +53,14 @@ function DeviceList({
                         <thead>
 
                             <tr>
+
                                 <th>Hostname</th>
                                 <th>IP Address</th>
                                 <th>Operating System</th>
                                 <th>Status</th>
                                 <th>Registered</th>
                                 <th>Actions</th>
+
                             </tr>
 
                         </thead>
@@ -97,24 +97,35 @@ function DeviceList({
                                         </td>
 
                                         <td>
+
                                             {new Date(
                                                 device.registered_at
                                             ).toLocaleDateString()}
+
                                         </td>
 
                                         <td>
 
                                             <div className="action-buttons">
 
+                                                {/* =========================
+                                                    VIEW DEVICE
+                                                ========================== */}
+
                                                 <button
                                                     className="action-btn view-btn"
                                                     title="View Device"
                                                     onClick={() =>
-                                                        navigate(`/devices/${device.id}`)
+                                                        onViewDevice(device)
                                                     }
                                                 >
                                                     👁
                                                 </button>
+
+
+                                                {/* =========================
+                                                    EDIT DEVICE
+                                                ========================== */}
 
                                                 <button
                                                     className="action-btn edit-btn"
@@ -125,6 +136,11 @@ function DeviceList({
                                                 >
                                                     ✏️
                                                 </button>
+
+
+                                                {/* =========================
+                                                    ENABLE / DISABLE DEVICE
+                                                ========================== */}
 
                                                 <button
                                                     className="action-btn disable-btn"
@@ -141,6 +157,11 @@ function DeviceList({
                                                         ? "✅"
                                                         : "🚫"}
                                                 </button>
+
+
+                                                {/* =========================
+                                                    DELETE DEVICE
+                                                ========================== */}
 
                                                 <button
                                                     className="action-btn delete-btn"

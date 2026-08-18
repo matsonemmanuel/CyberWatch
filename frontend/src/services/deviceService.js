@@ -1,10 +1,19 @@
+const API_URL = "http://127.0.0.1:5000/api/v1";
+
+
+// =========================================================
+// GET ALL DEVICES
+// =========================================================
+
 export async function getDevices() {
 
     const token = localStorage.getItem("token");
 
     const response = await fetch(
-        "http://127.0.0.1:5000/api/v1/devices",
+        `${API_URL}/devices`,
         {
+            method: "GET",
+
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -17,36 +26,75 @@ export async function getDevices() {
 
 }
 
+
+// =========================================================
+// GET SINGLE DEVICE
+// =========================================================
+
+export async function getDevice(deviceId) {
+
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(
+        `${API_URL}/devices/${deviceId}`,
+        {
+            method: "GET",
+
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
+
+    const data = await response.json();
+
+    return data;
+
+}
+
+
+// =========================================================
+// CREATE DEVICE
+// =========================================================
+
 export async function createDevice(deviceData) {
 
     const token = localStorage.getItem("token");
 
     const response = await fetch(
-        "http://127.0.0.1:5000/api/v1/devices",
+        `${API_URL}/devices`,
         {
             method: "POST",
 
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
+                Authorization: `Bearer ${token}`
             },
 
             body: JSON.stringify(deviceData)
         }
     );
 
-    return response.json();
+    const data = await response.json();
+
+    return data;
 
 }
 
-export async function updateDevice(deviceId, deviceData) {
+
+// =========================================================
+// UPDATE DEVICE
+// =========================================================
+
+export async function updateDevice(
+    deviceId,
+    deviceData
+) {
 
     const token = localStorage.getItem("token");
 
     const response = await fetch(
-
-        `http://127.0.0.1:5000/api/v1/devices/${deviceId}`,
-
+        `${API_URL}/devices/${deviceId}`,
         {
             method: "PUT",
 
@@ -57,21 +105,28 @@ export async function updateDevice(deviceId, deviceData) {
 
             body: JSON.stringify(deviceData)
         }
-
     );
 
-    return await response.json();
+    const data = await response.json();
+
+    return data;
 
 }
 
-export async function updateDeviceStatus(deviceId, status) {
+
+// =========================================================
+// UPDATE DEVICE STATUS
+// =========================================================
+
+export async function updateDeviceStatus(
+    deviceId,
+    status
+) {
 
     const token = localStorage.getItem("token");
 
     const response = await fetch(
-
-        `http://127.0.0.1:5000/api/v1/devices/${deviceId}/status`,
-
+        `${API_URL}/devices/${deviceId}/status`,
         {
             method: "PATCH",
 
@@ -84,32 +139,36 @@ export async function updateDeviceStatus(deviceId, status) {
                 status: status
             })
         }
-
     );
 
-    return await response.json();
+    const data = await response.json();
+
+    return data;
 
 }
+
+
+// =========================================================
+// DELETE DEVICE
+// =========================================================
 
 export async function deleteDevice(deviceId) {
 
     const token = localStorage.getItem("token");
 
     const response = await fetch(
-
-        `http://127.0.0.1:5000/api/v1/devices/${deviceId}`,
-
+        `${API_URL}/devices/${deviceId}`,
         {
             method: "DELETE",
 
             headers: {
                 Authorization: `Bearer ${token}`
             }
-
         }
-
     );
 
-    return await response.json();
+    const data = await response.json();
+
+    return data;
 
 }

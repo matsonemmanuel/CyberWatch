@@ -137,3 +137,24 @@
     white-space: nowrap;
 
 }
+
+/* =========================================================
+   TOPBAR - DASHBOARD GRID FIX
+   ========================================================= */
+
+.topbar {
+    position: relative;
+
+    top: auto;
+    left: auto;
+    right: auto;
+
+    width: 100%;
+    height: 100%;
+
+    margin: 0;
+
+    box-sizing: border-box;
+
+    overflow: hidden;
+}

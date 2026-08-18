@@ -1,0 +1,727 @@
+/* =========================================================
+   EDIT LOG MODAL
+   ========================================================= */
+
+.edit-log-overlay {
+
+    position: fixed;
+
+    inset: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+
+    box-sizing: border-box;
+
+    background: rgba(2, 6, 23, 0.75);
+
+    z-index: 3000;
+
+}
+
+
+/* =========================================================
+   MODAL
+   ========================================================= */
+
+.edit-log-modal {
+
+    width: 100%;
+
+    max-width: 620px;
+
+    max-height: 90vh;
+
+    display: flex;
+
+    flex-direction: column;
+
+    box-sizing: border-box;
+
+    background: #1e293b;
+
+    border: 1px solid #334155;
+
+    border-radius: 16px;
+
+    box-shadow:
+        0 25px 60px rgba(0, 0, 0, 0.5);
+
+    overflow: hidden;
+
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.edit-log-header {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 20px 24px;
+
+    background: #172338;
+
+    border-bottom: 1px solid #334155;
+
+}
+
+
+.edit-log-header h2 {
+
+    margin: 0;
+
+    color: #f8fafc;
+
+    font-size: 22px;
+
+    font-weight: 700;
+
+}
+
+
+.edit-log-close {
+
+    width: 36px;
+
+    height: 36px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background: #334155;
+
+    color: #f8fafc;
+
+    font-size: 24px;
+
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
+
+}
+
+
+.edit-log-close:hover {
+
+    background: #475569;
+
+    transform: scale(1.05);
+
+}
+
+
+/* =========================================================
+   BODY
+   ========================================================= */
+
+.edit-log-body {
+
+    padding: 24px;
+
+    overflow-y: auto;
+
+}
+
+
+/* =========================================================
+   READ ONLY INFORMATION
+   ========================================================= */
+
+.edit-log-readonly {
+
+    display: grid;
+
+    grid-template-columns: 170px minmax(0, 1fr);
+
+    align-items: center;
+
+    gap: 20px;
+
+    min-height: 48px;
+
+    padding: 8px 0;
+
+    border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+
+}
+
+
+.edit-log-label {
+
+    color: #94a3b8;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+}
+
+
+.edit-log-value {
+
+    min-width: 0;
+
+    color: #f8fafc;
+
+    font-size: 15px;
+
+    font-weight: 500;
+
+    overflow-wrap: anywhere;
+
+}
+
+
+/* =========================================================
+   FORM FIELD
+   ========================================================= */
+
+.edit-log-field {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 8px;
+
+    margin-top: 20px;
+
+}
+
+
+.edit-log-field label {
+
+    color: #cbd5e1;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+}
+
+
+/* =========================================================
+   INPUT
+   ========================================================= */
+
+.edit-log-field input {
+
+    width: 100%;
+
+    min-height: 44px;
+
+    padding: 10px 12px;
+
+    box-sizing: border-box;
+
+    border: 1px solid #475569;
+
+    border-radius: 8px;
+
+    outline: none;
+
+    background: #0f172a;
+
+    color: #f8fafc;
+
+    font-size: 14px;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+
+}
+
+
+.edit-log-field input::placeholder {
+
+    color: #64748b;
+
+}
+
+
+.edit-log-field input:focus {
+
+    border-color: #0ea5e9;
+
+    background: #111c2f;
+
+    box-shadow:
+        0 0 0 3px rgba(14, 165, 233, 0.12);
+
+}
+
+
+.edit-log-field input:disabled {
+
+    opacity: 0.6;
+
+    cursor: not-allowed;
+
+}
+
+
+/* =========================================================
+   LOADING DEVICES
+   ========================================================= */
+
+.edit-log-loading {
+
+    width: 100%;
+
+    min-height: 44px;
+
+    display: flex;
+
+    align-items: center;
+
+    padding: 10px 12px;
+
+    box-sizing: border-box;
+
+    border: 1px solid #475569;
+
+    border-radius: 8px;
+
+    background: #0f172a;
+
+    color: #94a3b8;
+
+    font-size: 14px;
+
+}
+
+
+/* =========================================================
+   CUSTOM DROPDOWN CONTAINER
+   ========================================================= */
+
+.edit-log-field > div {
+
+    width: 100%;
+
+}
+
+
+/* =========================================================
+   CURRENT STATUS
+   ========================================================= */
+
+.edit-log-readonly .log-status {
+
+    width: fit-content;
+
+}
+
+
+/* =========================================================
+   ERROR MESSAGE
+   ========================================================= */
+
+.edit-log-error {
+
+    margin-top: 20px;
+
+    padding: 12px 14px;
+
+    border: 1px solid rgba(239, 68, 68, 0.35);
+
+    border-radius: 8px;
+
+    background: rgba(239, 68, 68, 0.10);
+
+    color: #fca5a5;
+
+    font-size: 14px;
+
+    line-height: 1.5;
+
+}
+
+/* =========================================================
+   REASON FOR EDIT TEXTAREA
+   ========================================================= */
+
+.edit-log-field textarea {
+
+    width: 100%;
+
+    min-height: 120px;
+
+    padding: 13px 14px;
+
+    box-sizing: border-box;
+
+    border: 1px solid #475569;
+
+    border-radius: 10px;
+
+    outline: none;
+
+    resize: vertical;
+
+    background: #0f172a;
+
+    color: #f8fafc;
+
+    font-family: inherit;
+
+    font-size: 14px;
+
+    font-weight: 400;
+
+    line-height: 1.6;
+
+    transition:
+        border-color 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+
+}
+
+
+/* =========================================================
+   PLACEHOLDER
+   ========================================================= */
+
+.edit-log-field textarea::placeholder {
+
+    color: #64748b;
+
+    opacity: 1;
+
+}
+
+
+/* =========================================================
+   FOCUS
+   ========================================================= */
+
+.edit-log-field textarea:focus {
+
+    border-color: #0ea5e9;
+
+    background: #111c2f;
+
+    box-shadow:
+        0 0 0 3px rgba(14, 165, 233, 0.12);
+
+}
+
+
+/* =========================================================
+   HOVER
+   ========================================================= */
+
+.edit-log-field textarea:hover {
+
+    border-color: #64748b;
+
+}
+
+
+/* =========================================================
+   DISABLED
+   ========================================================= */
+
+.edit-log-field textarea:disabled {
+
+    opacity: 0.6;
+
+    cursor: not-allowed;
+
+}
+
+
+/* =========================================================
+   CUSTOM SCROLLBAR
+   ========================================================= */
+
+.edit-log-field textarea::-webkit-scrollbar {
+
+    width: 7px;
+
+}
+
+
+.edit-log-field textarea::-webkit-scrollbar-track {
+
+    background: #0f172a;
+
+    border-radius: 10px;
+
+}
+
+
+.edit-log-field textarea::-webkit-scrollbar-thumb {
+
+    background: #475569;
+
+    border-radius: 10px;
+
+}
+
+
+.edit-log-field textarea::-webkit-scrollbar-thumb:hover {
+
+    background: #64748b;
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .edit-log-field textarea {
+
+        min-height: 110px;
+
+        padding: 12px;
+
+        font-size: 14px;
+
+    }
+
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.edit-log-footer {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-end;
+
+    gap: 12px;
+
+    padding: 16px 24px;
+
+    background: #172338;
+
+    border-top: 1px solid #334155;
+
+}
+
+
+/* =========================================================
+   CANCEL BUTTON
+   ========================================================= */
+
+.edit-log-cancel-btn {
+
+    min-width: 90px;
+
+    padding: 10px 18px;
+
+    border: 1px solid #475569;
+
+    border-radius: 8px;
+
+    background: #334155;
+
+    color: #e2e8f0;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease;
+
+}
+
+
+.edit-log-cancel-btn:hover {
+
+    background: #475569;
+
+    border-color: #64748b;
+
+}
+
+
+.edit-log-cancel-btn:disabled {
+
+    opacity: 0.5;
+
+    cursor: not-allowed;
+
+}
+
+
+/* =========================================================
+   SAVE BUTTON
+   ========================================================= */
+
+.edit-log-save-btn {
+
+    min-width: 130px;
+
+    padding: 10px 18px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background: #0ea5e9;
+
+    color: #ffffff;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+
+}
+
+
+.edit-log-save-btn:hover {
+
+    background: #0284c7;
+
+    box-shadow:
+        0 4px 12px rgba(14, 165, 233, 0.25);
+
+}
+
+
+.edit-log-save-btn:active {
+
+    transform: translateY(1px);
+
+}
+
+
+.edit-log-save-btn:disabled {
+
+    opacity: 0.55;
+
+    cursor: not-allowed;
+
+    box-shadow: none;
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .edit-log-overlay {
+
+        padding: 12px;
+
+    }
+
+
+    .edit-log-modal {
+
+        max-height: 95vh;
+
+        border-radius: 12px;
+
+    }
+
+
+    .edit-log-header {
+
+        padding: 16px 18px;
+
+    }
+
+
+    .edit-log-header h2 {
+
+        font-size: 19px;
+
+    }
+
+
+    .edit-log-body {
+
+        padding: 18px;
+
+    }
+
+
+    .edit-log-readonly {
+
+        grid-template-columns: 1fr;
+
+        gap: 4px;
+
+        padding: 10px 0;
+
+    }
+
+
+    .edit-log-field {
+
+        margin-top: 18px;
+
+    }
+
+
+    .edit-log-footer {
+
+        flex-direction: column-reverse;
+
+        align-items: stretch;
+
+        padding: 14px 18px;
+
+    }
+
+
+    .edit-log-cancel-btn,
+    .edit-log-save-btn {
+
+        width: 100%;
+
+    }
+
+}

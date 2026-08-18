@@ -2,18 +2,13 @@
    CYBERWATCH - MAIN DASHBOARD LAYOUT
    ========================================================= */
 
-
-/* =========================================================
-   MAIN APPLICATION LAYOUT
-   ========================================================= */
-
 .dashboard-layout {
     width: 100%;
     height: 100vh;
 
     display: grid;
 
-    grid-template-columns: 214px minmax(0, 1fr);
+    grid-template-columns: 215px minmax(0, 1fr);
     grid-template-rows: 100vh;
 
     background: #0b1324;
@@ -29,19 +24,47 @@
    ========================================================= */
 
 .dashboard-sidebar {
-    width: 214px;
+    position: relative;
+
+    width: 215px;
     height: 100vh;
 
     min-width: 0;
     min-height: 0;
 
+    box-sizing: border-box;
+
+    background: #1e293b;
+
+    border-right: 1px solid #334155;
+
     overflow: hidden;
+
+    z-index: 100;
+}
+
+
+/*
+   IMPORTANT:
+   The Sidebar component must stay INSIDE the sidebar
+   grid column. It must NOT be fixed to the browser window.
+*/
+
+.dashboard-sidebar .sidebar {
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
 
     box-sizing: border-box;
 
-    background: #1e2a3d;
+    z-index: 100;
 
-    border-right: 1px solid #2b3a50;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 
@@ -58,7 +81,7 @@
 
     display: grid;
 
-    grid-template-rows: 87px minmax(0, 1fr);
+    grid-template-rows: 86px minmax(0, 1fr);
 
     background: #0b1324;
 
@@ -69,16 +92,14 @@
 
 
 /* =========================================================
-   TOPBAR AREA
+   TOPBAR
    ========================================================= */
 
 .dashboard-topbar {
     width: 100%;
-    height: 87px;
+    height: 86px;
 
     min-width: 0;
-
-    overflow: hidden;
 
     box-sizing: border-box;
 
@@ -86,12 +107,16 @@
 
     border-bottom: 1px solid #2b3a50;
 
-    z-index: 10;
+    overflow: hidden;
+
+    position: relative;
+
+    z-index: 50;
 }
 
 
 /* =========================================================
-   PAGE CONTENT AREA
+   PAGE CONTENT
    ========================================================= */
 
 .dashboard-page-content {
@@ -101,7 +126,7 @@
     min-width: 0;
     min-height: 0;
 
-    padding: 26px 26px 32px 26px;
+    padding: 26px;
 
     box-sizing: border-box;
 
@@ -129,6 +154,7 @@
 
 .dashboard-page-content::-webkit-scrollbar-thumb {
     background: #475569;
+
     border-radius: 10px;
 }
 
@@ -187,7 +213,7 @@
     }
 
     .dashboard-page-content {
-        padding: 22px 22px 28px 22px;
+        padding: 22px;
     }
 }
 
@@ -215,7 +241,7 @@
     }
 
     .dashboard-page-content {
-        padding: 20px 18px 24px 18px;
+        padding: 20px 18px 24px;
     }
 }
 
@@ -227,11 +253,11 @@
 @media (max-width: 650px) {
 
     .dashboard-layout {
-        grid-template-columns: 180px minmax(0, 1fr);
+        grid-template-columns: 190px minmax(0, 1fr);
     }
 
     .dashboard-sidebar {
-        width: 180px;
+        width: 190px;
     }
 
     .dashboard-main {

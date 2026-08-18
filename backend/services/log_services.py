@@ -311,7 +311,7 @@ def get_log_service(log_id):
         "data": log
     }, 200
 
-    #Update Log Service
+# Update Log Service
 
 def update_log_service(
     log_id,
@@ -321,26 +321,36 @@ def update_log_service(
 ):
     """
     Update an existing security log.
+
+    Only severity can be changed.
+    Incident/event and device are immutable.
+
+    A reason/comment is required and recorded
+    in the activity history.
     """
 
-    device_id = data.get("device_id")
-    event = data.get("event")
     severity = data.get("severity")
+    comment = data.get("comment")
 
-    # Validate required fields
-    if not device_id or not event or not severity:
+
+    # =====================================================
+    # VALIDATE SEVERITY
+    # =====================================================
+
+    if not severity:
 
         return {
             "status": "error",
-            "message": "All fields are required"
+            "message": "Severity is required"
         }, 400
 
-    # Validate severity
+
     allowed_severity = [
         "low",
         "medium",
         "high"
     ]
+
 
     if severity not in allowed_severity:
 
@@ -349,123 +359,156 @@ def update_log_service(
             "message": "Invalid severity level"
         }, 400
 
+
+    # =====================================================
+    # VALIDATE COMMENT
+    # =====================================================
+
+    if not comment or not comment.strip():
+
+        return {
+            "status": "error",
+            "message": "Reason for editing this log is required"
+        }, 400
+
+
+    comment = comment.strip()
+
+
+    # =====================================================
+    # DATABASE CONNECTION
+    # =====================================================
+
     connection = get_db_connection()
 
     cursor = connection.cursor()
 
-    # Verify log exists
-    cursor.execute(
-        """
-        SELECT *
-        FROM logs
-        WHERE id = ?
-        """,
-        (log_id,)
-    )
 
-    log = cursor.fetchone()
+    try:
 
-    if not log:
+        # =================================================
+        # VERIFY LOG EXISTS
+        # =================================================
 
-        connection.close()
-
-        return {
-            "status": "error",
-            "message": "Log not found"
-        }, 404
-
-    # Prevent archived logs from being modified
-    if log["archived"]:
-
-        connection.close()
-
-        return {
-            "status": "error",
-            "message": "Archived logs cannot be updated"
-        }, 400
-
-    # Verify device exists
-
-    cursor.execute(
-        """
-        SELECT id
-        FROM devices
-        WHERE id = ?
-        """,
-        (device_id,)
-    )
-
-    device = cursor.fetchone()
-
-    if not device:
-
-        connection.close()
-
-        return {
-            "status": "error",
-            "message": "Device not found"
-        }, 404
-
-    # Update the log
-
-
-    cursor.execute(
-        """
-        UPDATE logs
-        SET
-            device_id = ?,
-            event = ?,
-            severity = ?
-        WHERE id = ?
-        """,
-        (
-            device_id,
-            event,
-            severity,
-            log_id
+        cursor.execute(
+            """
+            SELECT *
+            FROM logs
+            WHERE id = ?
+            """,
+            (log_id,)
         )
-    )
 
-    connection.commit()
-
-    # Retrieve updated log
-    cursor.execute(
-        """
-        SELECT *
-        FROM logs
-        WHERE id = ?
-        """,
-        (log_id,)
-    )
-
-    row = cursor.fetchone()
-
-    # Record audit activity
+        log = cursor.fetchone()
 
 
-    log_activity(
-        current_user_id,
-        current_username,
-        f"Updated log {log_id}"
-    )
+        if not log:
 
-    connection.close()
+            return {
+                "status": "error",
+                "message": "Log not found"
+            }, 404
 
-    updated_log = {
-        "id": row["id"],
-        "timestamp": row["timestamp"],
-        "device_id": row["device_id"],
-        "event": row["event"],
-        "severity": row["severity"],
-        "status": row["status"],
-        "archived": bool(row["archived"])
-    }
 
-    return {
-        "status": "success",
-        "message": "Log updated successfully",
-        "data": updated_log
-    }, 200
+        # =================================================
+        # PREVENT ARCHIVED LOG MODIFICATION
+        # =================================================
+
+        if log["archived"]:
+
+            return {
+                "status": "error",
+                "message": "Archived logs cannot be updated"
+            }, 400
+
+
+        # =================================================
+        # UPDATE ONLY SEVERITY
+        # =================================================
+
+        cursor.execute(
+            """
+            UPDATE logs
+            SET severity = ?
+            WHERE id = ?
+            """,
+            (
+                severity,
+                log_id
+            )
+        )
+
+
+        connection.commit()
+
+
+        # =================================================
+        # RETRIEVE UPDATED LOG
+        # =================================================
+
+        cursor.execute(
+            """
+            SELECT *
+            FROM logs
+            WHERE id = ?
+            """,
+            (log_id,)
+        )
+
+        row = cursor.fetchone()
+
+
+        # =================================================
+        # RECORD AUDIT ACTIVITY
+        # =================================================
+
+        log_activity(
+            current_user_id,
+            current_username,
+            f"Updated log {log_id}: {comment}"
+        )
+
+
+        # =================================================
+        # RETURN UPDATED LOG
+        # =================================================
+
+        updated_log = {
+            "id": row["id"],
+            "timestamp": row["timestamp"],
+            "device_id": row["device_id"],
+            "event": row["event"],
+            "severity": row["severity"],
+            "status": row["status"],
+            "archived": bool(row["archived"])
+        }
+
+
+        return {
+            "status": "success",
+            "message": "Log updated successfully",
+            "data": updated_log
+        }, 200
+
+
+    except Exception as error:
+
+        connection.rollback()
+
+        print(
+            "Error updating log:",
+            error
+        )
+
+        return {
+            "status": "error",
+            "message": "Failed to update log"
+        }, 500
+
+
+    finally:
+
+        connection.close()
 
     # status update service
 
