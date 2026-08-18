@@ -150,6 +150,9 @@ def create_log_service(
 ):
     """
     Create a new security log.
+
+    High-severity logs automatically generate
+    a security alert.
     """
 
     event = data.get("event")
@@ -157,18 +160,25 @@ def create_log_service(
     device_id = data.get("device_id")
     status = data.get("status", "open")
 
+
+    # =====================================================
+    # VALIDATION
+    # =====================================================
+
     if not event or not severity or not device_id:
 
         return {
             "status": "error",
             "message": "All required fields must be provided."
         }, 400
-    
+
+
     allowed_severity = [
         "low",
         "medium",
         "high"
     ]
+
 
     if severity not in allowed_severity:
 
@@ -177,65 +187,174 @@ def create_log_service(
             "message": "Invalid severity level"
         }, 400
 
+
+    # =====================================================
+    # DATABASE CONNECTION
+    # =====================================================
+
     connection = get_db_connection()
 
     cursor = connection.cursor()
 
-    timestamp = datetime.now(
-        timezone.utc
-    ).isoformat().replace("+00:00", "Z")
 
-    new_log = {
-        "timestamp": timestamp,
-        "device_id": device_id,
-        "event": event,
-        "severity": severity,
-        "status": "open",
-        "archived": False
-    }
+    try:
 
-    cursor.execute(
-        """
-        INSERT INTO logs
-        (
-            timestamp,
-            device_id,
-            event,
-            severity,
-            status,
-            archived
+        # =================================================
+        # CREATE TIMESTAMP
+        # =================================================
+
+        timestamp = datetime.now(
+            timezone.utc
+        ).isoformat().replace(
+            "+00:00",
+            "Z"
         )
-        VALUES (?, ?, ?, ?, ?, ?)
-        """,
-        (
-            timestamp,
-            device_id,
-            event,
-            severity,
-            "open",
-            0
+
+
+        # =================================================
+        # CREATE SECURITY LOG
+        # =================================================
+
+        cursor.execute(
+            """
+            INSERT INTO logs
+            (
+                timestamp,
+                device_id,
+                event,
+                severity,
+                status,
+                archived
+            )
+            VALUES (?, ?, ?, ?, ?, ?)
+            """,
+            (
+                timestamp,
+                device_id,
+                event,
+                severity,
+                "open",
+                0
+            )
         )
-    )
 
-    connection.commit()
 
-    new_log_id = cursor.lastrowid
+        new_log_id = cursor.lastrowid
 
-    log_activity(
-        current_user_id,
-        current_username,
-        f"Created security log for device {device_id}"
-    )
 
-    connection.close()
+        # =================================================
+        # AUTOMATIC ALERT GENERATION
+        # =================================================
 
-    new_log["id"] = new_log_id
+        if severity == "high":
 
-    return {
-        "status": "success",
-        "message": "Log received successfully",
-        "data": new_log
-    }, 201
+            alert_title = f"High Severity: {event}"
+
+            alert_message = (
+                f"A high-severity security event was detected "
+                f"on a monitored device: {event}."
+            )
+
+
+            cursor.execute(
+                """
+                INSERT INTO alerts
+                (
+                    log_id,
+                    device_id,
+                    title,
+                    message,
+                    severity,
+                    status,
+                    created_at
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    new_log_id,
+                    device_id,
+                    alert_title,
+                    alert_message,
+                    severity,
+                    "active",
+                    timestamp
+                )
+            )
+
+
+            print(
+                f"Automatic alert created for log {new_log_id}"
+            )
+
+
+        # =================================================
+        # COMMIT LOG + ALERT
+        # =================================================
+
+        connection.commit()
+
+
+        # =================================================
+        # AUDIT ACTIVITY
+        # =================================================
+
+        log_activity(
+            current_user_id,
+            current_username,
+            f"Created security log for device {device_id}"
+        )
+
+
+        # =================================================
+        # RETURN LOG
+        # =================================================
+
+        new_log = {
+
+            "id": new_log_id,
+
+            "timestamp": timestamp,
+
+            "device_id": device_id,
+
+            "event": event,
+
+            "severity": severity,
+
+            "status": "open",
+
+            "archived": False
+
+        }
+
+
+        return {
+            "status": "success",
+            "message": "Log received successfully",
+            "data": new_log
+        }, 201
+
+
+    except Exception as error:
+
+        connection.rollback()
+
+
+        print(
+            "Error creating security log:",
+            error
+        )
+
+
+        return {
+            "status": "error",
+            "message": "Failed to create security log"
+        }, 500
+
+
+    finally:
+
+        connection.close()
 
 
 # Get Single Log Service

@@ -43,6 +43,8 @@ from routes.log_routes import log_bp
 
 from routes.dashboard_routes import dashboard_bp
 
+from routes.alert_routes import alert_bp
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -70,6 +72,7 @@ app.register_blueprint(device_bp)
 app.register_blueprint(user_bp)
 app.register_blueprint(log_bp)
 app.register_blueprint(dashboard_bp)
+app.register_blueprint(alert_bp)
 
 # JWT Configuration
 

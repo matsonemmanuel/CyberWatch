@@ -9,6 +9,7 @@ import SecurityLogs from "./pages/SecurityLogs";
 import ProtectedRoute from "./components/ProtectedRoute";
 import DashboardLayout from "./layouts/DashboardLayout";
 import History from "./pages/History";
+import Alerts from "./pages/Alerts";
 
 
 function App() {
@@ -60,6 +61,11 @@ function App() {
                     <Route
                         path="/history"
                         element={<History />}
+                    />
+
+                    <Route
+                        path="/alerts"
+                        element={<Alerts />}
                     />
 
                 </Route>
