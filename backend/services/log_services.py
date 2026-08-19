@@ -1,5 +1,5 @@
 
-
+from services.alert_engine import analyze_log
 
 from flask import jsonify
 
@@ -246,16 +246,16 @@ def create_log_service(
         # AUTOMATIC ALERT GENERATION
         # =================================================
 
-        if severity == "high":
+        log_for_analysis = {
+            "id": new_log_id,
+            "device_id": device_id,
+            "event": event,
+            "severity": severity
+        }
 
-            alert_title = f"High Severity: {event}"
+        alert_decision = analyze_log(log_for_analysis)
 
-            alert_message = (
-                f"A high-severity security event was detected "
-                f"on a monitored device: {event}."
-            )
-
-
+        if alert_decision["should_alert"]:
             cursor.execute(
                 """
                 INSERT INTO alerts
@@ -273,19 +273,15 @@ def create_log_service(
                 (
                     new_log_id,
                     device_id,
-                    alert_title,
-                    alert_message,
-                    severity,
+                    alert_decision["title"],
+                    alert_decision["message"],
+                    alert_decision["severity"],
                     "active",
                     timestamp
                 )
             )
 
-
-            print(
-                f"Automatic alert created for log {new_log_id}"
-            )
-
+            print(f"Automatic alert created for log {new_log_id}")
 
         # =================================================
         # COMMIT LOG + ALERT
