@@ -237,7 +237,8 @@ def create_alert_service(data):
     allowed_severities = [
         "low",
         "medium",
-        "high"
+        "high",
+        "critical"
     ]
 
 
